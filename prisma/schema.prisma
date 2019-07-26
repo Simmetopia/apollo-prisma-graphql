@@ -1,0 +1,44 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.db"
+  default  = true
+}
+
+generator photon {
+  provider = "photonjs"
+}
+
+generator nexus_prisma {
+  provider = "nexus-prisma"
+}
+
+model User {
+  id        String        @default(cuid()) @id @unique
+  username  String        @unique
+  name      String?
+  purchases Transaction[] @relation(name: "TransactionToUser")
+  sells     Transaction[] @relation(name: "TransactionToUser2")
+}
+
+model Transaction {
+  id     String @default(cuid()) @id @unique
+  item   Item
+  price  Int
+  seller User   @relation(name: "TransactionToUser")
+  buyer  User   @relation(name: "TransactionToUser2")
+}
+
+model Item {
+  id                 String     @default(cuid()) @id @unique
+  saberPart          SaberParts
+  partName           String
+  partDescription    String?
+  isAvailableLocally Boolean
+}
+
+enum SaberParts {
+  CRYSTAL
+  POWER_CORE
+  CRYSTAL_VIBRATOR
+  HILT
+}
