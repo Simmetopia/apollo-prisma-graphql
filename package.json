@@ -17,9 +17,16 @@
     "graphql-middleware": "3.0.1"
   },
   "devDependencies": {
-    "@types/node": "10.14.9",
+    "@types/node": "12.6.8",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-simple-import-sort": "^4.0.0",
+    "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "ts-node-dev": "1.0.0-pre.40",
-    "typescript": "3.5.2"
+    "typescript": "3.5.3"
   }
 }

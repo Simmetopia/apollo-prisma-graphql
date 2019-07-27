@@ -1,4 +1,5 @@
 import { verify } from 'jsonwebtoken';
+
 import { Context } from './types';
 
 export const APP_SECRET = 'appsecret321';

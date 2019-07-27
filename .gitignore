@@ -2,3 +2,4 @@
 *.db
 /prisma/migrations
 schema.graphql
+/presentation

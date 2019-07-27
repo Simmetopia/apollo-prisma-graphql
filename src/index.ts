@@ -1,11 +1,10 @@
 import { nexusPrismaPlugin } from '@generated/nexus-prisma';
 import Photon, { SaberParts } from '@generated/photon';
-import { makeSchema, objectType, stringArg, enumType } from '@prisma/nexus';
-import { join } from 'path';
-import { Context } from './types';
+import { enumType, makeSchema, objectType, stringArg } from '@prisma/nexus';
 import { ApolloServer } from 'apollo-server';
-import { applyMiddleware } from 'graphql-middleware';
-import { permissions } from './permissions';
+import { join } from 'path';
+
+import { Context } from './types';
 
 const photon = new Photon();
 
@@ -25,12 +24,7 @@ export const User = objectType({
 });
 export const SaberPart = enumType({
   name: 'SaberPart',
-  members: [
-    SaberParts.CRYSTAL,
-    SaberParts.CRYSTAL_VIBRATOR,
-    SaberParts.HILT,
-    SaberParts.POWER_CORE,
-  ],
+  members: [SaberParts.CRYSTAL, SaberParts.CRYSTAL_VIBRATOR, SaberParts.HILT, SaberParts.POWER_CORE],
 });
 export const Item = objectType({
   name: 'Item',
@@ -106,8 +100,4 @@ const server = new ApolloServer({
     request: req,
   }),
 });
-server
-  .listen()
-  .then(({ port }) =>
-    console.log(`🚀 Server ready at http://localhost:${port}`),
-  );
+server.listen().then(({ port }) => console.log(`🚀 Server ready at http://localhost:${port}`));
