@@ -12,10 +12,17 @@ generator nexus_prisma {
   provider = "nexus-prisma"
 }
 
+model UserDetails {
+  id        String  @default(cuid()) @id @unique
+  user      User
+  firstName String?
+  lastName  String?
+}
+
 model User {
   id        String        @default(cuid()) @id @unique
   username  String        @unique
-  name      String?
+  details   UserDetails
   purchases Transaction[] @relation(name: "TransactionToUser")
   sells     Transaction[] @relation(name: "TransactionToUser2")
 }

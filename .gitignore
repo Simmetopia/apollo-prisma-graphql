@@ -3,3 +3,4 @@
 /prisma/migrations
 schema.graphql
 /presentation
+/generated

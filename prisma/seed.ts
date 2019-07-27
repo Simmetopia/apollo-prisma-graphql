@@ -11,7 +11,7 @@ async function main() {
     },
   });
   await photon.users.create({
-    data: { name: 'Watto', username: 'Watto_jedi_sith_reseller' },
+    data: { username: 'dark_saber_dealer_69', details: { create: { firstName: 'Watto', lastName: 'Darkies' } } },
   });
 }
 
