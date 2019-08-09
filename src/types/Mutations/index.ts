@@ -10,5 +10,14 @@ export const Mutation = objectType({
         return ctx.photon.users.create({ data: { username: args.userName, details: {} } });
       },
     });
+    t.field('login', {
+      type: 'User',
+      nullable: true,
+      args: {
+        lang: stringArg({ required: true }),
+      },
+    });
+    t.crud.createOneUser();
+    t.crud.createOneTransaction();
   },
 });

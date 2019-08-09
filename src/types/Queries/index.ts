@@ -19,6 +19,7 @@ export const userQueries = extendType({
       type: 'User',
       resolve: (_, __, ctx) => ctx.photon.users.findMany(),
     });
+    t.crud.findManyTransaction({pagination:true, filtering:true, ordering:true });
   },
 });
 
