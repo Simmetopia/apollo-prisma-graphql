@@ -31,16 +31,16 @@ model Transaction {
   id     String @default(cuid()) @id @unique
   item   Item
   price  Int
-  seller User   @relation(name: "TransactionToUser")
-  buyer  User   @relation(name: "TransactionToUser2")
+  seller User   @relation(name: "TransactionToUser2")
+  buyer  User   @relation(name: "TransactionToUser")
 }
 
 model Item {
-  id                 String     @default(cuid()) @id @unique
-  saberPart          SaberParts
-  partName           String
-  partDescription    String?
-  isAvailableLocally Boolean
+  id              String     @default(cuid()) @id @unique
+  saberPart       SaberParts
+  partName        String
+  partDescription String?
+  price           Float?
 }
 
 enum SaberParts {

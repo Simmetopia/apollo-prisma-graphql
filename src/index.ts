@@ -5,12 +5,12 @@ import { ApolloServer } from 'apollo-server';
 import { join } from 'path';
 
 import { Context } from './types';
-import { Item } from './types/Item';
+import { ItemGraph } from './types/Item';
 import { Mutation } from './types/Mutations';
 import { userQueries } from './types/Queries';
 import { SaberPart } from './types/SaberPart';
 import { Transaction } from './types/Transactions';
-import { User } from './types/User';
+import { UserGraph } from './types/User';
 import { UserDetails } from './types/UserDetails';
 
 const photon = new Photon();
@@ -20,7 +20,7 @@ const nexusPrisma = nexusPrismaPlugin({
 });
 
 const schema = makeSchema({
-  types: [userQueries, Mutation, Transaction, Item, User, SaberPart, UserDetails, nexusPrisma],
+  types: [userQueries, Mutation, Transaction, ...ItemGraph, SaberPart, ...UserGraph, UserDetails, nexusPrisma],
   outputs: {
     typegen: join(__dirname, '../generated/nexus-typegen.ts'),
     schema: join(__dirname, '/schema.graphql'),
@@ -47,4 +47,5 @@ const server = new ApolloServer({
     request: req,
   }),
 });
+
 server.listen().then(({ port }) => console.log(`🚀 Server ready at http://localhost:${port}`));
