@@ -1,4 +1,4 @@
-import { objectType } from '@prisma/nexus/dist';
+import { objectType } from 'nexus';
 
 export const Transaction = objectType({
   name: 'Transaction',

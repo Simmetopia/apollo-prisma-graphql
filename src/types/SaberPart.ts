@@ -1,5 +1,5 @@
 import { SaberParts } from '@generated/photon';
-import { enumType } from '@prisma/nexus/dist';
+import { enumType } from 'nexus';
 
 export const SaberPart = enumType({
   name: 'saberPart',

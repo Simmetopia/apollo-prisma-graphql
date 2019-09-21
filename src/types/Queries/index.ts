@@ -1,4 +1,4 @@
-import { extendType, objectType } from '@prisma/nexus/dist';
+import { extendType, objectType } from 'nexus';
 
 const Query = objectType({
   name: 'Query',
@@ -19,8 +19,8 @@ export const userQueries = extendType({
       type: 'User',
       resolve: (_, __, ctx) => ctx.photon.users.findMany(),
     });
-    t.crud.findManyTransaction({ pagination: true, filtering: true, ordering: true });
-    t.crud.findManyItem();
+    t.crud.transactions({ pagination: true, filtering: true, ordering: true });
+    t.crud.items();
   },
 });
 

@@ -1,4 +1,4 @@
-import { arg, extendType, idArg, inputObjectType, objectType } from '@prisma/nexus/dist';
+import { arg, extendType, idArg, inputObjectType, objectType } from 'nexus';
 
 const Item = objectType({
   name: 'Item',
@@ -25,8 +25,8 @@ const ItemArgs = inputObjectType({
 const ItemQueries = extendType({
   type: 'Query',
   definition: t => {
-    t.crud.findOneItem();
-    t.crud.findManyItem();
+    t.crud.item();
+    t.crud.items();
   },
 });
 

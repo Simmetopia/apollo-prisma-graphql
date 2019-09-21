@@ -1,4 +1,4 @@
-import { extendType, inputObjectType, objectType } from '@prisma/nexus';
+import { extendType, inputObjectType, objectType } from 'nexus';
 
 export const User = objectType({
   name: 'User',
@@ -21,8 +21,7 @@ const UserAuthType = inputObjectType({
 const UserQueries = extendType({
   type: 'Query',
   definition: t => {
-    t.crud.findManyUser();
-    t.crud.findOneUser();
+    t.crud.users();
   },
 });
 const UserMutations = extendType({

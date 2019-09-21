@@ -1,4 +1,4 @@
-import { objectType, stringArg } from '@prisma/nexus/dist';
+import { objectType, stringArg } from 'nexus';
 
 export const Mutation = objectType({
   name: 'Mutation',

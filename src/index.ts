@@ -1,6 +1,6 @@
 import { nexusPrismaPlugin } from '@generated/nexus-prisma';
-import Photon from '@generated/photon';
-import { makeSchema } from '@prisma/nexus';
+import {Photon} from '@generated/photon';
+import { makeSchema } from 'nexus';
 import { ApolloServer } from 'apollo-server';
 import { join } from 'path';
 
