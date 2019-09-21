@@ -1,3 +1,5 @@
+import { SaberParts } from '@generated/photon';
+import { company, lorem, random } from 'faker';
 import { arg, extendType, idArg, inputObjectType, objectType } from 'nexus';
 
 const Item = objectType({
@@ -10,6 +12,7 @@ const Item = objectType({
 
     t.model.partDescription();
     t.model.partName();
+    t.model.price();
   },
 });
 
@@ -42,8 +45,31 @@ const ItemMutations = extendType({
           data: {
             partName,
             partDescription,
-            isAvailableLocally: true,
             saberPart,
+          },
+        });
+      },
+    });
+
+    t.field('randomItem', {
+      type: 'User',
+      args: { userId: idArg({ required: true }) },
+      resolve: (_, args, ctx) => {
+        const id = args.userId;
+        console.log(id);
+        const saberPartArry = [...Object.keys(SaberParts)];
+
+        return ctx.photon.users.update({
+          where: { id },
+          data: {
+            inventory: {
+              create: {
+                partDescription: lorem.paragraph(),
+                saberPart: saberPartArry[random.number(saberPartArry.length - 1)] as SaberParts,
+                partName: company.bsBuzz(),
+                price: Math.round(random.number(400)),
+              },
+            },
           },
         });
       },
@@ -58,7 +84,7 @@ const ItemMutations = extendType({
     });
 
     t.field('itemDelete', {
-      type: Item,
+      type: 'Item',
       args: { id: idArg({ required: true }) },
       resolve: (_, { id }, { photon }) => {
         return photon.items.delete({ where: { id } });

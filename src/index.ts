@@ -1,7 +1,7 @@
 import { nexusPrismaPlugin } from '@generated/nexus-prisma';
-import {Photon} from '@generated/photon';
-import { makeSchema } from 'nexus';
+import { Photon } from '@generated/photon';
 import { ApolloServer } from 'apollo-server';
+import { makeSchema } from 'nexus';
 import { join } from 'path';
 
 import { Context } from './types';
@@ -12,6 +12,7 @@ import { SaberPart } from './types/SaberPart';
 import { Transaction } from './types/Transactions';
 import { UserGraph } from './types/User';
 import { UserDetails } from './types/UserDetails';
+import webshop from './webshop';
 
 const photon = new Photon();
 
@@ -20,7 +21,17 @@ const nexusPrisma = nexusPrismaPlugin({
 });
 
 const schema = makeSchema({
-  types: [userQueries, Mutation, Transaction, ...ItemGraph, SaberPart, ...UserGraph, UserDetails, nexusPrisma],
+  types: [
+    userQueries,
+    Mutation,
+    Transaction,
+    SaberPart,
+    UserDetails,
+    nexusPrisma,
+    ...webshop,
+    ...ItemGraph,
+    ...UserGraph,
+  ],
   outputs: {
     typegen: join(__dirname, '../generated/nexus-typegen.ts'),
     schema: join(__dirname, '/schema.graphql'),

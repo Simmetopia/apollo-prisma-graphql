@@ -8,6 +8,7 @@ export const User = objectType({
     t.model.purchases({ type: 'Transaction' });
     t.model.sells({ type: 'Transaction' });
     t.model.username();
+    t.model.inventory();
   },
 });
 
@@ -22,6 +23,7 @@ const UserQueries = extendType({
   type: 'Query',
   definition: t => {
     t.crud.users();
+    t.crud.user();
   },
 });
 const UserMutations = extendType({
@@ -38,8 +40,14 @@ const UserMutations = extendType({
     t.field('signup', {
       type: 'User',
       args: { data: UserAuthType },
-      resolve: (_, { data }, ctx) => {
-        return ctx.photon.users.create({ data: { username: data.username, details: {} } });
+      resolve: async (_, { data }, ctx) => {
+        try {
+          let a = await ctx.photon.users.create({ data: { username: data.username, details: {} } });
+          return a;
+        } catch (e) {
+          console.log(e);
+          throw new Error('User with that name already exists');
+        }
       },
     });
 
