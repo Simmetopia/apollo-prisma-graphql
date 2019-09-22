@@ -19,20 +19,11 @@ model UserDetails {
 }
 
 model User {
-  id        String        @default(cuid()) @id @unique
-  username  String        @unique
+  id        String      @default(cuid()) @id @unique
+  username  String      @unique
   details   UserDetails
   inventory Item[]
-  purchases Transaction[] @relation(name: "TransactionToUser")
-  sells     Transaction[] @relation(name: "TransactionToUser2")
-}
-
-model Transaction {
-  id     String @default(cuid()) @id @unique
-  item   Item
-  price  Int
-  seller User   @relation(name: "TransactionToUser2")
-  buyer  User   @relation(name: "TransactionToUser")
+  money     Int
 }
 
 model Item {

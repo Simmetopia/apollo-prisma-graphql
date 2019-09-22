@@ -25,6 +25,7 @@ async function main() {
       username: WEBSHOP_OWNER,
       inventory: { create: createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
+      money: 21000,
     },
   });
 }

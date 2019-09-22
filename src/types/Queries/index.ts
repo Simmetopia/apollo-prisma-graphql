@@ -11,17 +11,4 @@ const Query = objectType({
   },
 });
 
-export const userQueries = extendType({
-  type: 'Query',
-  definition(t) {
-    t.field('GetUsers', {
-      list: true,
-      type: 'User',
-      resolve: (_, __, ctx) => ctx.photon.users.findMany(),
-    });
-    t.crud.transactions({ pagination: true, filtering: true, ordering: true });
-    t.crud.items();
-  },
-});
-
-export const QueryTypes = [Query, userQueries];
+export const QueryTypes = [Query];

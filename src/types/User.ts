@@ -1,14 +1,16 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import { random } from 'faker';
+import { arg, extendType, inputObjectType, objectType } from 'nexus';
+
+import { WEBSHOP_OWNER } from '../webshop';
 
 export const User = objectType({
   name: 'User',
   definition(t) {
     t.model.id();
     t.model.details();
-    t.model.purchases({ type: 'Transaction' });
-    t.model.sells({ type: 'Transaction' });
     t.model.username();
     t.model.inventory();
+    t.model.money();
   },
 });
 
@@ -19,6 +21,7 @@ const UserAuthType = inputObjectType({
     t.string('username', { required: true });
   },
 });
+
 const UserQueries = extendType({
   type: 'Query',
   definition: t => {
@@ -26,6 +29,7 @@ const UserQueries = extendType({
     t.crud.user();
   },
 });
+
 const UserMutations = extendType({
   type: 'Mutation',
   definition: t => {
@@ -42,7 +46,9 @@ const UserMutations = extendType({
       args: { data: UserAuthType },
       resolve: async (_, { data }, ctx) => {
         try {
-          let a = await ctx.photon.users.create({ data: { username: data.username, details: {} } });
+          let a = await ctx.photon.users.create({
+            data: { username: data.username, money: random.number(200), details: {} },
+          });
           return a;
         } catch (e) {
           console.log(e);
@@ -80,4 +86,41 @@ const UserMutations = extendType({
   },
 });
 
-export const UserGraph = [User, UserQueries, UserMutations];
+const BuyItemArgs = inputObjectType({
+  name: 'BuyItemArgs',
+  nonNullDefaults: { input: true },
+  definition: t => {
+    t.id('userId', { required: true });
+    t.id('itemId', { required: true });
+  },
+});
+
+const BuyAndSellItems = extendType({
+  type: 'Mutation',
+  definition: t => {
+    t.field('requestPurchase', {
+      type: 'User',
+      args: { data: arg({ type: BuyItemArgs, description: 'Input args to request a  purchase' }) },
+      resolve: async (_parent, { data: { userId, itemId } }, ctx) => {
+        const webshopOwnerHasItem = await ctx.photon.users
+          .findOne({ where: { username: WEBSHOP_OWNER } })
+          .inventory({ where: { id: itemId } });
+        console.log(webshopOwnerHasItem);
+        if (webshopOwnerHasItem.length !== 1) {
+          throw new Error('Webshop does not own requested item');
+        }
+        // TODO Whaat, no money invovled? Watto does not like to give out things for free!
+        await ctx.photon.users.update({
+          where: { username: WEBSHOP_OWNER },
+          data: { inventory: { disconnect: { id: webshopOwnerHasItem[0].id } } },
+        });
+        return ctx.photon.users.update({
+          where: { id: userId },
+          data: { inventory: { connect: { id: webshopOwnerHasItem[0].id } } },
+        });
+      },
+    });
+  },
+});
+
+export const UserGraph = [BuyAndSellItems, User, UserQueries, UserMutations];
