@@ -194,6 +194,10 @@ const items_query = gql`
 
 
 <!-- slide -->
+## Repo:
+Backend: https://github.com/Simmetopia/apollo-prisma-graphql
+Frontend: https://github.com/Simmetopia/apollo-graphql-frontend
+<!-- slide -->
 ## Assignments:
 
 1. This is how you remind me?
