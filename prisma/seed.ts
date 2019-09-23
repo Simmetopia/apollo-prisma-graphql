@@ -1,8 +1,10 @@
 import { Photon, SaberParts } from '@generated/photon';
 import { commerce, lorem, random } from 'faker';
 const photon = new Photon();
+
 const WEBSHOP_OWNER = 'dark_saber_dealer_69';
 const saberPartArry = [...Object.keys(SaberParts)];
+
 const createItems = (amountOfItems: number) => {
   return Array.from({ length: amountOfItems }, () => ({
     saberPart: saberPartArry[random.number(saberPartArry.length - 1)] as SaberParts,
@@ -13,13 +15,6 @@ const createItems = (amountOfItems: number) => {
 };
 
 async function main() {
-  await photon.items.create({
-    data: {
-      partDescription: 'A genuine lightsaber hilt',
-      partName: 'Saber hilt',
-      saberPart: SaberParts.HILT,
-    },
-  });
   await photon.users.create({
     data: {
       username: WEBSHOP_OWNER,

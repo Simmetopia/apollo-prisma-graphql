@@ -1,14 +1,15 @@
-import { extendType, objectType } from 'nexus';
+import { objectType } from 'nexus';
 
-const Query = objectType({
+export const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.field('_unsued', {
-      deprecation: 'root query type',
+    t.field('_deprecated_field', {
       type: 'String',
-      resolve: () => 'unsued',
+      deprecation: 'This is the root type',
+      resolve: () => {
+        return 'Unused';
+      },
     });
   },
 });
 
-export const QueryTypes = [Query];

@@ -37,7 +37,8 @@ const UserMutations = extendType({
       type: 'User',
       args: { data: UserAuthType },
       resolve: (_, { data }, ctx) => {
-        return ctx.photon.users.findOne({ where: { username: data.username } });
+        // TODO, WHAAT, NO WHY NO COMEBACK!?
+        return null;
       },
     });
 
@@ -47,7 +48,7 @@ const UserMutations = extendType({
       resolve: async (_, { data }, ctx) => {
         try {
           let a = await ctx.photon.users.create({
-            data: { username: data.username, money: random.number(200), details: {} },
+            data: { username: data.username, money: random.number(300), details: {} },
           });
           return a;
         } catch (e) {

@@ -7,7 +7,7 @@ import { join } from 'path';
 import { Context } from './types';
 import { ItemGraph } from './types/Item';
 import { Mutation } from './types/Mutations';
-import { QueryTypes } from './types/Queries';
+import { Query } from './types/Queries';
 import { SaberPart } from './types/SaberPart';
 import { UserGraph } from './types/User';
 import { UserDetails } from './types/UserDetails';
@@ -22,10 +22,10 @@ const nexusPrisma = nexusPrismaPlugin({
 const schema = makeSchema({
   types: [
     Mutation,
+    Query,
     SaberPart,
     UserDetails,
     nexusPrisma,
-    ...QueryTypes,
     ...webshop,
     ...ItemGraph,
     ...UserGraph,
