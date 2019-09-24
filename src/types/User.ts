@@ -37,8 +37,7 @@ const UserMutations = extendType({
       type: 'User',
       args: { data: UserAuthType },
       resolve: (_, { data }, ctx) => {
-        // TODO, WHAAT, NO WHY NO COMEBACK!?
-        return null;
+        return ctx.photon.users.findOne({ where: { username: data.username } });
       },
     });
 
@@ -48,7 +47,7 @@ const UserMutations = extendType({
       resolve: async (_, { data }, ctx) => {
         try {
           let a = await ctx.photon.users.create({
-            data: { username: data.username, money: random.number(300), details: {} },
+            data: { username: data.username, money: random.number(30), details: {} },
           });
           return a;
         } catch (e) {
@@ -103,21 +102,27 @@ const BuyAndSellItems = extendType({
       type: 'User',
       args: { data: arg({ type: BuyItemArgs, description: 'Input args to request a  purchase' }) },
       resolve: async (_parent, { data: { userId, itemId } }, ctx) => {
-        const webshopOwnerHasItem = await ctx.photon.users
-          .findOne({ where: { username: WEBSHOP_OWNER } })
-          .inventory({ where: { id: itemId } });
-        console.log(webshopOwnerHasItem);
-        if (webshopOwnerHasItem.length !== 1) {
+        const webshopOwnerHasItem = await ctx.photon.users.findOne({
+          select: { inventory: true, money: true },
+          where: { username: WEBSHOP_OWNER },
+        });
+        const item = await webshopOwnerHasItem.inventory.find(item => item.id === itemId);
+        if (!item) {
           throw new Error('Webshop does not own requested item');
         }
-        // TODO Whaat, no money invovled? Watto does not like to give out things for free!
+
+        const user = await ctx.photon.users.findOne({ where: { id: userId } });
+        if (user.money < item.price) {
+          throw new Error('Shhhit bro, aint got enough cash');
+        }
+
         await ctx.photon.users.update({
           where: { username: WEBSHOP_OWNER },
-          data: { inventory: { disconnect: { id: webshopOwnerHasItem[0].id } } },
+          data: { inventory: { disconnect: { id: item.id } }, money: webshopOwnerHasItem.money + item.price },
         });
         return ctx.photon.users.update({
           where: { id: userId },
-          data: { inventory: { connect: { id: webshopOwnerHasItem[0].id } } },
+          data: { inventory: { connect: { id: item.id } }, money: user.money - item.price },
         });
       },
     });
