@@ -106,7 +106,7 @@ const BuyAndSellItems = extendType({
           select: { inventory: true, money: true },
           where: { username: WEBSHOP_OWNER },
         });
-        const item = await webshopOwnerHasItem.inventory.find(item => item.id === itemId);
+        const item = webshopOwnerHasItem.inventory.find(item => item.id === itemId);
         if (!item) {
           throw new Error('Webshop does not own requested item');
         }
@@ -124,6 +124,40 @@ const BuyAndSellItems = extendType({
           where: { id: userId },
           data: { inventory: { connect: { id: item.id } }, money: user.money - item.price },
         });
+      },
+    });
+    t.field('sellItem', {
+      type: 'User',
+      args: { data: arg({ type: BuyItemArgs, description: 'Input args to request a  purchase' }) },
+      resolve: async (_parent, { data: { userId, itemId } }, ctx) => {
+        const webshopOwnerHasItem = await ctx.photon.users.findOne({
+          select: { inventory: true, money: true },
+          where: { username: WEBSHOP_OWNER },
+        });
+
+        const user = await ctx.photon.users.findOne({
+          select: { inventory: true, money: true },
+          where: { id: userId },
+        });
+
+        const item = user.inventory.find(item => item.id === itemId);
+        if (!item) {
+          throw new Error('You do not own the requested item');
+        }
+
+        if (webshopOwnerHasItem.money < item.price) {
+          throw new Error('Webshop cannot afford item');
+        }
+
+        const userToRet = await ctx.photon.users.update({
+          where: { id: userId },
+          data: { inventory: { disconnect: { id: item.id } }, money: user.money + item.price },
+        });
+        await ctx.photon.users.update({
+          where: { username: WEBSHOP_OWNER },
+          data: { inventory: { connect: { id: item.id } }, money: webshopOwnerHasItem.money - item.price },
+        });
+        return userToRet;
       },
     });
   },
