@@ -88,7 +88,7 @@ t.field('itemCreate', {
 	args: { data: arg({ type: ItemArgs, required: true }) },
 	resolve: (_, { data }, ctx) => {
 		const { partName, partDescription, saberPart } = data;
-		return ctx.photon.items.create({
+		return ctx.db.items.create({
 			data: {
 				partName,
 				partDescription,
@@ -105,7 +105,7 @@ These fields however will control what arguments this `mutation` will have. Abov
 
 Lastly in the resolver is where the actual magic is happening, here we are taking `data` from the arguments, and the `ctx` which ApolloServer will inject into every resolver, we can create our type. Photon is a auto generated object that acts as and interface to our database. 
 
-The `ctx.photon.items.create` return a promise, but ApolloServer is smart enough to know that is has to wait for the data before returning data to the client.
+The `ctx.db.items.create` return a promise, but ApolloServer is smart enough to know that is has to wait for the data before returning data to the client.
 
 
 

@@ -1,6 +1,6 @@
-import { objectType } from 'nexus';
+import { schema } from 'nexus';
 
-export const UserDetails = objectType({
+export const UserDetails = schema.objectType({
   name: 'UserDetails',
   definition(t) {
     t.model.id();

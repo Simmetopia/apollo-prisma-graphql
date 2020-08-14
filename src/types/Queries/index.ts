@@ -1,6 +1,6 @@
-import { objectType } from 'nexus';
+import { schema } from 'nexus';
 
-export const Query = objectType({
+export const Query = schema.objectType({
   name: 'Query',
   definition(t) {
     t.field('_deprecated_field', {
@@ -12,4 +12,3 @@ export const Query = objectType({
     });
   },
 });
-

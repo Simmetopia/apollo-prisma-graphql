@@ -1,25 +1,21 @@
-generator photon {
-  provider = "photonjs"
-}
-
-generator nexus_prisma {
-  provider = "nexus-prisma"
-}
-
 datasource db {
   provider = "sqlite"
-  url      = "file:dev.db"
+  url      = "file:./dev.db"
+}
+
+generator prisma_client_js {
+  provider = "prisma-client-js"
 }
 
 model UserDetails {
-  id        String  @default(cuid()) @id @unique
+  id        String  @default(cuid()) @id 
   user      User
   firstName String?
   lastName  String?
 }
 
 model User {
-  id        String      @default(cuid()) @id @unique
+  id        String      @default(cuid()) @id 
   username  String      @unique
   details   UserDetails
   inventory Item[]
@@ -27,16 +23,10 @@ model User {
 }
 
 model Item {
-  id              String     @default(cuid()) @id @unique
-  saberPart       SaberParts
+  id              String     @default(cuid()) @id 
+  saberPart       String
   partName        String
   partDescription String?
   price           Float?
 }
 
-enum SaberParts {
-  CRYSTAL
-  POWER_CORE
-  CRYSTAL_VIBRATOR
-  HILT
-}
