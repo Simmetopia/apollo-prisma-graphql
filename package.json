@@ -1,10 +1,12 @@
 {
-  "name": "typescript-graphql",
+  "name": "watto-tatooine-webshop",
+  "author":"Simon Bundgaard-Egeberg",
   "version": "0.0.1",
   "scripts": {
     "start": "yarn nexus dev",
     "db:save":"yarn prisma migrate save --experimental",
-    "db:up":"yarn prisma migrate up --experimental"
+    "db:up":"yarn prisma migrate up --experimental",
+    "seed": "yarn ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^2.4.1",

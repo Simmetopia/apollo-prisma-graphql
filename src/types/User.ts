@@ -57,7 +57,7 @@ const UserMutations = schema.extendType({
       resolve: async (_, { data }, ctx) => {
         try {
           const a = await ctx.db.user.create({
-            data: { username: data.username, money: random.number(30), details: {} },
+            data: { username: data.username, money: random.number(30), details: { create: {} } },
           });
           return a;
         } catch (e) {

@@ -6,7 +6,7 @@ import { SaberParts } from '../src/types/SaberPart';
 const client = new PrismaClient();
 
 const WEBSHOP_OWNER = 'dark_saber_dealer_69';
-const saberPartArry = [...Object.keys(SaberParts)];
+const saberPartArry = [...SaberParts];
 
 const createItems = (amountOfItems: number) => {
   return Array.from({ length: amountOfItems }, () => ({
