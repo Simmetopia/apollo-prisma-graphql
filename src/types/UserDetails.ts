@@ -1,11 +1,11 @@
-import { schema } from 'nexus';
+import { objectType } from 'nexus';
+import {UserDetails} from 'nexus-prisma'
 
-export const UserDetails = schema.objectType({
-  name: 'UserDetails',
+export const userDetails = objectType({
+  name: UserDetails.$name,
+  description: UserDetails.$description,
   definition(t) {
-    t.model.id();
-    t.model.firstName();
-    t.model.lastName();
-    t.model.user({ type: 'User' });
-  },
-});
+    t.field(UserDetails.id),
+    t.field(UserDetails.lastName)
+  }
+})

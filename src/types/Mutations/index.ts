@@ -1,6 +1,6 @@
-import { schema } from 'nexus';
+import { objectType } from 'nexus';
 
-export const Mutation = schema.objectType({
+export const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
     t.field('_deprecated_field', {
