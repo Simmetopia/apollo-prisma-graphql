@@ -53,8 +53,10 @@ export interface NexusGenObjects {
   Query: {};
   User: { // root type
     id: string; // ID!
+    username: string; // String!
   }
   UserDetails: { // root type
+    firstName?: string | null; // String
     id: string; // ID!
     lastName?: string | null; // String
   }
@@ -77,15 +79,20 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     _deprecated_field: string | null; // String
+    userCreate: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
+    GetUser: NexusGenRootTypes['User'] | null; // User
+    GetUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
+    GetUsersList: Array<NexusGenRootTypes['User'] | null> | null; // [User]
     _deprecated_field: string | null; // String
-    myq: string | null; // String
   }
   User: { // field return type
     id: string; // ID!
+    username: string; // String!
   }
   UserDetails: { // field return type
+    firstName: string | null; // String
     id: string; // ID!
     lastName: string | null; // String
   }
@@ -98,21 +105,39 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     _deprecated_field: 'String'
+    userCreate: 'User'
   }
   Query: { // field return type name
+    GetUser: 'User'
+    GetUserDetails: 'UserDetails'
+    GetUsersList: 'User'
     _deprecated_field: 'String'
-    myq: 'String'
   }
   User: { // field return type name
     id: 'ID'
+    username: 'String'
   }
   UserDetails: { // field return type name
+    firstName: 'String'
     id: 'ID'
     lastName: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    userCreate: { // args
+      username: string; // String!
+    }
+  }
+  Query: {
+    GetUser: { // args
+      id: string; // ID!
+    }
+    GetUserDetails: { // args
+      id: string; // ID!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
