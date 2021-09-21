@@ -3,128 +3,123 @@
  * Do not make changes to this file directly
  */
 
-import type { ContextType } from './types/context';
+
+import type { ContextType } from "./types/context"
+
+
+
 
 declare global {
   interface NexusGen extends NexusGenTypes {}
 }
 
 export interface NexusGenInputs {
-  BuyItemArgs: {
-    // input type
+  BuyItemArgs: { // input type
     itemId: string; // ID!
     userId: string; // ID!
-  };
-  ItemArgs: {
-    // input type
+  }
+  ItemArgs: { // input type
     partDescription?: string | null; // String
     partName?: string | null; // String
     saberPart?: string | null; // String
-  };
-  UserAuthInput: {
-    // input type
+  }
+  UserAuthInput: { // input type
     username: string; // String!
-  };
-  UserDetailsUpdateArgs: {
-    // input type
+  }
+  UserDetailsUpdateArgs: { // input type
     firstName?: string | null; // String
     id?: string | null; // ID
     lastName?: string | null; // String
-  };
+  }
 }
 
-export interface NexusGenEnums {}
+export interface NexusGenEnums {
+}
 
 export interface NexusGenScalars {
-  String: string;
-  Int: number;
-  Float: number;
-  Boolean: boolean;
-  ID: string;
+  String: string
+  Int: number
+  Float: number
+  Boolean: boolean
+  ID: string
 }
 
 export interface NexusGenObjects {
-  Item: {
-    // root type
+  Item: { // root type
     id: string; // ID!
     saberPart?: string | null; // String
-  };
+  }
   Mutation: {};
   Query: {};
-  User: {
-    // root type
+  User: { // root type
     id: string; // ID!
-  };
-  UserDetails: {
-    // root type
+  }
+  UserDetails: { // root type
     id: string; // ID!
     lastName?: string | null; // String
-  };
+  }
 }
 
-export interface NexusGenInterfaces {}
+export interface NexusGenInterfaces {
+}
 
-export interface NexusGenUnions {}
+export interface NexusGenUnions {
+}
 
-export type NexusGenRootTypes = NexusGenObjects;
+export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars;
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
-  Item: {
-    // field return type
+  Item: { // field return type
     id: string; // ID!
     saberPart: string | null; // String
-  };
-  Mutation: {
-    // field return type
+  }
+  Mutation: { // field return type
     _deprecated_field: string | null; // String
-  };
-  Query: {
-    // field return type
+  }
+  Query: { // field return type
     _deprecated_field: string | null; // String
-  };
-  User: {
-    // field return type
+    myq: string | null; // String
+  }
+  User: { // field return type
     id: string; // ID!
-  };
-  UserDetails: {
-    // field return type
+  }
+  UserDetails: { // field return type
     id: string; // ID!
     lastName: string | null; // String
-  };
+  }
 }
 
 export interface NexusGenFieldTypeNames {
-  Item: {
-    // field return type name
-    id: 'ID';
-    saberPart: 'String';
-  };
-  Mutation: {
-    // field return type name
-    _deprecated_field: 'String';
-  };
-  Query: {
-    // field return type name
-    _deprecated_field: 'String';
-  };
-  User: {
-    // field return type name
-    id: 'ID';
-  };
-  UserDetails: {
-    // field return type name
-    id: 'ID';
-    lastName: 'String';
-  };
+  Item: { // field return type name
+    id: 'ID'
+    saberPart: 'String'
+  }
+  Mutation: { // field return type name
+    _deprecated_field: 'String'
+  }
+  Query: { // field return type name
+    _deprecated_field: 'String'
+    myq: 'String'
+  }
+  User: { // field return type name
+    id: 'ID'
+  }
+  UserDetails: { // field return type name
+    id: 'ID'
+    lastName: 'String'
+  }
 }
 
-export interface NexusGenArgTypes {}
+export interface NexusGenArgTypes {
+}
 
-export interface NexusGenAbstractTypeMembers {}
+export interface NexusGenAbstractTypeMembers {
+}
 
-export interface NexusGenTypeInterfaces {}
+export interface NexusGenTypeInterfaces {
+}
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
@@ -144,11 +139,11 @@ export type NexusGenAbstractsUsingStrategyResolveType = never;
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
-    resolveType: true;
-    __typename: false;
-    isTypeOf: false;
-  };
-};
+    isTypeOf: false
+    resolveType: true
+    __typename: false
+  }
+}
 
 export interface NexusGenTypes {
   context: ContextType;
@@ -167,13 +162,8 @@ export interface NexusGenTypes {
   scalarNames: NexusGenScalarNames;
   unionNames: NexusGenUnionNames;
   allInputTypes: NexusGenTypes['inputNames'] | NexusGenTypes['enumNames'] | NexusGenTypes['scalarNames'];
-  allOutputTypes:
-    | NexusGenTypes['objectNames']
-    | NexusGenTypes['enumNames']
-    | NexusGenTypes['unionNames']
-    | NexusGenTypes['interfaceNames']
-    | NexusGenTypes['scalarNames'];
-  allNamedTypes: NexusGenTypes['allInputTypes'] | NexusGenTypes['allOutputTypes'];
+  allOutputTypes: NexusGenTypes['objectNames'] | NexusGenTypes['enumNames'] | NexusGenTypes['unionNames'] | NexusGenTypes['interfaceNames'] | NexusGenTypes['scalarNames'];
+  allNamedTypes: NexusGenTypes['allInputTypes'] | NexusGenTypes['allOutputTypes']
   abstractTypes: NexusGenTypes['interfaceNames'] | NexusGenTypes['unionNames'];
   abstractTypeMembers: NexusGenAbstractTypeMembers;
   objectsUsingAbstractStrategyIsTypeOf: NexusGenObjectsUsingAbstractStrategyIsTypeOf;
@@ -181,18 +171,18 @@ export interface NexusGenTypes {
   features: NexusGenFeaturesConfig;
 }
 
+
 declare global {
-  interface NexusGenPluginTypeConfig<TypeName extends string> {}
-  interface NexusGenPluginInputTypeConfig<TypeName extends string> {}
-  interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
-    /**
-     * The nullability guard can be helpful, but is also a potentially expensive operation for lists.
-     * We need to iterate the entire list to check for null items to guard against. Set this to true
-     * to skip the null guard on a specific field if you know there's no potential for unsafe types.
-     */
-    skipNullGuard?: boolean;
+  interface NexusGenPluginTypeConfig<TypeName extends string> {
   }
-  interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {}
-  interface NexusGenPluginSchemaConfig {}
-  interface NexusGenPluginArgConfig {}
+  interface NexusGenPluginInputTypeConfig<TypeName extends string> {
+  }
+  interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+  }
+  interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
+  }
+  interface NexusGenPluginSchemaConfig {
+  }
+  interface NexusGenPluginArgConfig {
+  }
 }
