@@ -26,6 +26,14 @@ export interface NexusGenInputs {
   UserAuthInput: { // input type
     username: string; // String!
   }
+  UserDetailsCreateInputArgs: { // input type
+    firstName: string; // String!
+    lastName?: string | null; // String
+    user: NexusGenInputs['UserDetailsCreateInputArgsUser']; // UserDetailsCreateInputArgsUser!
+  }
+  UserDetailsCreateInputArgsUser: { // input type
+    id: string; // ID!
+  }
   UserDetailsUpdateArgs: { // input type
     firstName?: string | null; // String
     id?: string | null; // ID
@@ -80,14 +88,17 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     _deprecated_field: string | null; // String
     userCreate: NexusGenRootTypes['User'] | null; // User
+    userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
   }
   Query: { // field return type
+    GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
     GetUser: NexusGenRootTypes['User'] | null; // User
     GetUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     GetUsersList: Array<NexusGenRootTypes['User'] | null> | null; // [User]
     _deprecated_field: string | null; // String
   }
   User: { // field return type
+    details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     id: string; // ID!
     username: string; // String!
   }
@@ -95,6 +106,7 @@ export interface NexusGenFieldTypes {
     firstName: string | null; // String
     id: string; // ID!
     lastName: string | null; // String
+    user: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -106,14 +118,17 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     _deprecated_field: 'String'
     userCreate: 'User'
+    userDetailsCreate: 'UserDetails'
   }
   Query: { // field return type name
+    GetAllUserDetails: 'UserDetails'
     GetUser: 'User'
     GetUserDetails: 'UserDetails'
     GetUsersList: 'User'
     _deprecated_field: 'String'
   }
   User: { // field return type name
+    details: 'UserDetails'
     id: 'ID'
     username: 'String'
   }
@@ -121,6 +136,7 @@ export interface NexusGenFieldTypeNames {
     firstName: 'String'
     id: 'ID'
     lastName: 'String'
+    user: 'User'
   }
 }
 
@@ -129,8 +145,14 @@ export interface NexusGenArgTypes {
     userCreate: { // args
       username: string; // String!
     }
+    userDetailsCreate: { // args
+      input: NexusGenInputs['UserDetailsCreateInputArgs']; // UserDetailsCreateInputArgs!
+    }
   }
   Query: {
+    GetAllUserDetails: { // args
+      id: string; // ID!
+    }
     GetUser: { // args
       id: string; // ID!
     }

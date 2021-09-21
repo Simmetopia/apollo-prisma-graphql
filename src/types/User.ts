@@ -7,6 +7,7 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.details);
   },
 });
 
@@ -63,7 +64,7 @@ export const UserMutations = extendType({
             data: {username:args.username, money:999}
           })
       }
-    })
+    });
   },
 });
 
