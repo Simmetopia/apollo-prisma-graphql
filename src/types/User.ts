@@ -14,7 +14,6 @@ export const user = objectType({
   },
 });
 
-
 export const UserUpdateInputArgs = inputObjectType({
   name: 'UserDetailsUpdateArgs',
   definition: (t) => {
