@@ -18,12 +18,21 @@ export interface NexusGenInputs {
     itemId: string; // ID!
     userId: string; // ID!
   }
+  GetUserDetailsInputArgs: { // input type
+    id: string; // ID!
+  }
+  GetUserInputArgs: { // input type
+    id: string; // ID!
+  }
   ItemArgs: { // input type
     partDescription?: string | null; // String
     partName?: string | null; // String
     saberPart?: string | null; // String
   }
   UserAuthInput: { // input type
+    username: string; // String!
+  }
+  UserCreateInputArgs: { // input type
     username: string; // String!
   }
   UserDetailsCreateInputArgs: { // input type
@@ -143,21 +152,18 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     userCreate: { // args
-      username: string; // String!
+      input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
     }
     userDetailsCreate: { // args
       input: NexusGenInputs['UserDetailsCreateInputArgs']; // UserDetailsCreateInputArgs!
     }
   }
   Query: {
-    GetAllUserDetails: { // args
-      id: string; // ID!
-    }
     GetUser: { // args
-      id: string; // ID!
+      input: NexusGenInputs['GetUserInputArgs']; // GetUserInputArgs!
     }
     GetUserDetails: { // args
-      id: string; // ID!
+      input: NexusGenInputs['GetUserDetailsInputArgs']; // GetUserDetailsInputArgs!
     }
   }
 }
