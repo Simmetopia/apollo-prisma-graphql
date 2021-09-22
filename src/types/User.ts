@@ -28,7 +28,6 @@ export const UserAuthType = inputObjectType({
   },
 });
 
-
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
@@ -38,68 +37,75 @@ export const UserQueries = extendType({
         return context.db.user.findMany();
       },
     });
-    t.field("GetUser", {
-      type: "User",
+    t.field('GetUser', {
+      type: 'User',
       args: {
         input: arg({
-          type: nonNull(inputObjectType({
-            name: "GetUserInputArgs",
-            definition(t) {
-              t.nonNull.id("id")
-            }
-          }))
-        })
+          type: nonNull(
+            inputObjectType({
+              name: 'GetUserInputArgs',
+              definition(t) {
+                t.nonNull.id('id');
+              },
+            }),
+          ),
+        }),
       },
-      resolve: (source, {input: {id}}, context) => {
+      resolve: (source, { input: { id } }, context) => {
         return context.db.user.findFirst({
-          where: { id: id }
+          where: { id: id },
         });
-      }
+      },
     });
-    t.field("GetUserByUsername", {
-      type: "User",
+    t.field('GetUserByUsername', {
+      type: 'User',
       args: {
         input: arg({
-          type: nonNull(inputObjectType({
-            name: "GetUserByUsernameInputArgs",
-            definition(t) {
-              t.nonNull.string("username")
-            }
-          }))
-        })
+          type: nonNull(
+            inputObjectType({
+              name: 'GetUserByUsernameInputArgs',
+              definition(t) {
+                t.nonNull.string('username');
+              },
+            }),
+          ),
+        }),
       },
-      resolve: (source, {input: {username}}, context) => {
+      resolve: (source, { input: { username } }, context) => {
         return context.db.user.findFirst({
-          where: { username: username}
-        })
-      }
-    })
+          where: { username: username },
+        });
+      },
+    });
   },
 });
 
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
-    t.field("userCreate", {
-      type: "User",
+    t.field('userCreate', {
+      type: 'User',
       args: {
         input: arg({
-          type: nonNull(inputObjectType({
-            name: "UserCreateInputArgs",
-            definition(t) {
-              t.nonNull.string("username")
-            }
-          })),
+          type: nonNull(
+            inputObjectType({
+              name: 'UserCreateInputArgs',
+              definition(t) {
+                t.nonNull.string('username');
+              },
+            }),
+          ),
         }),
       },
-      resolve: (source, {input: {username}}, context) => {
-        return context.db.user.create(
-          {
-            data: { username: username, money: 999 }
-          })
-      }
+      resolve: async (source, { input: { username } }, context) => {
+        const user = await context.db.user.findFirst({
+          where: { username: username },
+        });
+        if (!user) throw new Error('User not found my dude');
+        return user;
+      },
     });
-  }
+  },
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -113,5 +119,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {},
 });
