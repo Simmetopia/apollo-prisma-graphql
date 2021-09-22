@@ -1,5 +1,15 @@
 import { User, $settings } from 'nexus-prisma';
 import { objectType, inputObjectType, extendType, arg, nonNull, stringArg, list } from 'nexus';
+import { resolve } from 'path/posix';
+import { NotFound } from 'http-errors';
+import { prisma } from '.prisma/client';
+import { AuthenticationError } from 'apollo-server-errors';
+
+// function UserNotFoundError(message = "") {
+//   this.name = "UserNotFoundError";
+//   this.message = message;
+// }
+//UserNotFoundError.prototype = Error.prototype
 
 export const user = objectType({
   name: User.$name,
@@ -52,13 +62,33 @@ export const UserMutations = extendType({
     t.field('userCreate', {
       type: 'User',
       args: {username: nonNull(stringArg())},
-      resolve: (source, {username}, ctx) => {
-        return ctx.db.user.create(
-          {
-            data: {username, money:200}
-          })
+      resolve: async(source, {username}, ctx) => {
+        
+        const user = await ctx.db.user.findFirst( {where: {username} });
+
+        if(user)
+        {
+          throw new AuthenticationError("Username already in use" )
+        }
+        
+        return await ctx.db.user.create({data: {username, money:200}})
       }
     });
+    t.field('userLogin', {
+      type: 'User',
+      args: {username: nonNull(stringArg())},
+      resolve: async (source, {username}, ctx) => {
+
+        const user = await ctx.db.user.findFirst( {where: {username} });
+
+        if(!user)
+        {
+          throw new AuthenticationError("User not found: " + username )
+        }
+
+        return user;
+      }
+    })
   },
 });
 

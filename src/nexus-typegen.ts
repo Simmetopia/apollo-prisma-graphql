@@ -79,6 +79,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     _deprecated_field: string | null; // String
     userCreate: NexusGenRootTypes['User'] | null; // User
+    userLogin: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
     _deprecated_field: string | null; // String
@@ -103,6 +104,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     _deprecated_field: 'String'
     userCreate: 'User'
+    userLogin: 'User'
   }
   Query: { // field return type name
     _deprecated_field: 'String'
@@ -122,6 +124,9 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     userCreate: { // args
+      username: string; // String!
+    }
+    userLogin: { // args
       username: string; // String!
     }
   }
