@@ -1,5 +1,6 @@
 import { User, $settings } from 'nexus-prisma';
 import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
+import { AuthenticationError } from 'apollo-server-errors';
 
 export const user = objectType({
   name: User.$name,
@@ -71,10 +72,12 @@ export const UserQueries = extendType({
           ),
         }),
       },
-      resolve: (source, { input: { username } }, context) => {
-        return context.db.user.findFirst({
+      resolve: async (source, { input: { username } }, context) => {
+        const user = await context.db.user.findFirst({
           where: { username: username },
         });
+        if (!user) throw new AuthenticationError('User not found my dude');
+        return user;
       },
     });
   },
@@ -101,8 +104,13 @@ export const UserMutations = extendType({
         const user = await context.db.user.findFirst({
           where: { username: username },
         });
-        if (!user) throw new Error('User not found my dude');
-        return user;
+        if (user === null) {
+          return await context.db.user.create({
+            data: { username: username, money: 999 },
+          });
+        } else {
+          throw new AuthenticationError('User already exits my dude');
+        }
       },
     });
   },
