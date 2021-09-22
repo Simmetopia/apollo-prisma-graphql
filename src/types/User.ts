@@ -1,5 +1,5 @@
 import { User, $settings } from 'nexus-prisma';
-import { objectType, inputObjectType, extendType, nonNull, stringArg, list, idArg } from 'nexus';
+import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
 
 export const user = objectType({
   name: User.$name,
@@ -40,32 +40,48 @@ export const UserQueries = extendType({
     });
     t.field("GetUser", {
       type: "User",
-      args: {id:nonNull(idArg())},
+      args: {
+        input: arg({
+          type: nonNull(inputObjectType({
+            name: "GetUserInputArgs",
+            definition(t) {
+              t.nonNull.id("id")
+            }
+          }))
+        })
+      },
       resolve: (source, args, context) => {
         return context.db.user.findFirst({
-          where: {id:args.id}
+          where: { id: args.id }
         });
       }
     })
   },
 });
 
-
-
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
     t.field("userCreate", {
       type: "User",
-      args: {username: nonNull(stringArg())},
+      args: {
+        input: arg({
+          type: nonNull(inputObjectType({
+            name: "UserCreateInputArgs",
+            definition(t) {
+              t.nonNull.string("username")
+            }
+          })),
+        }),
+      },
       resolve: (source, args, context) => {
         return context.db.user.create(
           {
-            data: {username:args.username, money:999}
+            data: { username: args.username, money: 999 }
           })
       }
     });
-  },
+  }
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -79,5 +95,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) { },
 });

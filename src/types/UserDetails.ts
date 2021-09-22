@@ -1,5 +1,5 @@
 import { idArg, nonNull, objectType, extendType, inputObjectType, arg, list } from 'nexus';
-import {User, UserDetails} from 'nexus-prisma'
+import { User, UserDetails } from 'nexus-prisma'
 
 export const userDetails = objectType({
   name: UserDetails.$name,
@@ -17,22 +17,28 @@ export const UserDetailsQueries = extendType({
   definition: (t) => {
     t.field('GetAllUserDetails', {
       type: list("UserDetails"),
-      args: {id:nonNull(idArg())},
       resolve: (source, args, context) => {
         return context.db.userDetails.findMany()
       }
     }),
-    t.field("GetUserDetails", {
-      type: "UserDetails",
-      args: {id:nonNull(idArg())},
-      resolve: (source, args, context) => {
-        return context.db.userDetails.findFirst({
-          where: {id:args.id}
-        })
-      }
-    })
+      t.field("GetUserDetails", {
+        type: "UserDetails",
+        args: { input: arg({
+          type: nonNull(inputObjectType({
+            name: "GetUserDetailsInputArgs",
+            definition(t) {
+              t.nonNull.id("id")
+            }
+          }))
+        }) },
+        resolve: (source, args, context) => {
+          return context.db.userDetails.findFirst({
+            where: { id: args.id }
+          })
+        }
+      })
   },
-  
+
 });
 
 
@@ -41,27 +47,28 @@ export const UserDetailsMutations = extendType({
   definition(t) {
     t.field("userDetailsCreate", {
       type: "UserDetails",
-      args: {input:arg({
-        type: nonNull(inputObjectType({
-        name: "UserDetailsCreateInputArgs",
-        definition(t) {
-          t.field("user", {
-            type: nonNull(inputObjectType({
-              name: "UserDetailsCreateInputArgsUser",
-              definition(t){
-                t.nonNull.id("id")
-              }
-            }))
-          }),
-          t.nonNull.string("firstName")
-          t.string("lastName")
-        }
-      }))
-      }),
-     },
-      resolve: (source, {input:{user:{id:userId},firstName,lastName}}, context) => {
+      args: {
+        input: arg({
+          type: nonNull(inputObjectType({
+            name: "UserDetailsCreateInputArgs",
+            definition(t) {
+              t.field("user", {
+                type: nonNull(inputObjectType({
+                  name: "UserDetailsCreateInputArgsUser",
+                  definition(t) {
+                    t.nonNull.id("id")
+                  }
+                }))
+              }),
+                t.nonNull.string("firstName")
+              t.string("lastName")
+            }
+          }))
+        }),
+      },
+      resolve: (source, { input: { user: { id: userId }, firstName, lastName } }, context) => {
         return context.db.userDetails.create({
-          data: {firstName, lastName, userId}
+          data: { firstName, lastName, userId }
         })
       }
     });
