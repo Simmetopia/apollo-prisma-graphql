@@ -50,9 +50,9 @@ export const UserQueries = extendType({
           }))
         })
       },
-      resolve: (source, args, context) => {
+      resolve: (source, {input: {id}}, context) => {
         return context.db.user.findFirst({
-          where: { id: args.id }
+          where: { id: id }
         });
       }
     })
@@ -74,10 +74,10 @@ export const UserMutations = extendType({
           })),
         }),
       },
-      resolve: (source, args, context) => {
+      resolve: (source, {input: {username}}, context) => {
         return context.db.user.create(
           {
-            data: { username: args.username, money: 999 }
+            data: { username: username, money: 999 }
           })
       }
     });

@@ -31,9 +31,9 @@ export const UserDetailsQueries = extendType({
             }
           }))
         }) },
-        resolve: (source, args, context) => {
+        resolve: (source, {input: {id}}, context) => {
           return context.db.userDetails.findFirst({
-            where: { id: args.id }
+            where: { id: id }
           })
         }
       })
