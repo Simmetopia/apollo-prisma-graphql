@@ -5,12 +5,6 @@ import { NotFound } from 'http-errors';
 import { prisma } from '.prisma/client';
 import { AuthenticationError } from 'apollo-server-errors';
 
-// function UserNotFoundError(message = "") {
-//   this.name = "UserNotFoundError";
-//   this.message = message;
-// }
-//UserNotFoundError.prototype = Error.prototype
-
 export const user = objectType({
   name: User.$name,
   description: User.$description,
@@ -19,6 +13,7 @@ export const user = objectType({
     t.field(User.username);
   },
 });
+
 
 export const UserUpdateInputArgs = inputObjectType({
   name: 'UserDetailsUpdateArgs',
