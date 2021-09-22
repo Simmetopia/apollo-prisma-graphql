@@ -18,6 +18,9 @@ export interface NexusGenInputs {
     itemId: string; // ID!
     userId: string; // ID!
   }
+  GetUserByUsernameInputArgs: { // input type
+    username: string; // String!
+  }
   GetUserDetailsInputArgs: { // input type
     id: string; // ID!
   }
@@ -102,6 +105,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
     GetUser: NexusGenRootTypes['User'] | null; // User
+    GetUserByUsername: NexusGenRootTypes['User'] | null; // User
     GetUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     GetUsersList: Array<NexusGenRootTypes['User'] | null> | null; // [User]
     _deprecated_field: string | null; // String
@@ -132,6 +136,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     GetAllUserDetails: 'UserDetails'
     GetUser: 'User'
+    GetUserByUsername: 'User'
     GetUserDetails: 'UserDetails'
     GetUsersList: 'User'
     _deprecated_field: 'String'
@@ -161,6 +166,9 @@ export interface NexusGenArgTypes {
   Query: {
     GetUser: { // args
       input: NexusGenInputs['GetUserInputArgs']; // GetUserInputArgs!
+    }
+    GetUserByUsername: { // args
+      input: NexusGenInputs['GetUserByUsernameInputArgs']; // GetUserByUsernameInputArgs!
     }
     GetUserDetails: { // args
       input: NexusGenInputs['GetUserDetailsInputArgs']; // GetUserDetailsInputArgs!
