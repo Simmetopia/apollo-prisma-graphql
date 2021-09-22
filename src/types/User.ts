@@ -55,6 +55,24 @@ export const UserQueries = extendType({
           where: { id: id }
         });
       }
+    });
+    t.field("GetUserByUsername", {
+      type: "User",
+      args: {
+        input: arg({
+          type: nonNull(inputObjectType({
+            name: "GetUserByUsernameInputArgs",
+            definition(t) {
+              t.nonNull.string("username")
+            }
+          }))
+        })
+      },
+      resolve: (source, {input: {username}}, context) => {
+        return context.db.user.findFirst({
+          where: { username: username}
+        })
+      }
     })
   },
 });
