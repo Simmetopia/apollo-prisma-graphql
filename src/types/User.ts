@@ -56,7 +56,7 @@ export const UserMutations = extendType({
     t.field('userCreate', {
       type: 'User',
       args: {username: nonNull(stringArg())},
-      resolve: async(source, {username}, ctx) => {
+      resolve: async (source, {username}, ctx) => {
         
         const user = await ctx.db.user.findFirst( {where: {username} });
 

@@ -13,6 +13,9 @@ export const item = objectType({
     t.field('partName', {
       type: 'String'
     });
+    t.field('userId', {
+      type: 'String'
+    });
   },
 });
 
@@ -40,10 +43,11 @@ export const ItemQueries = extendType({
 
 export const ItemMutations = extendType({
   type: 'Mutation',
-  definition: (t) => {
-    t.field("itemCreate", {
-      type: "Item",
-      resolve: async (source, args, ctx) => {
+  definition(t) {
+    t.field('itemCreate', {
+      type: 'Item',
+      args: {userId: nonNull(stringArg())},
+      resolve: async (source, {userId}, ctx) => {
 
         const saberParts = ["Addon", "Body", "Emitter", "Pommel", "Switch"]
         const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)];
@@ -56,7 +60,7 @@ export const ItemMutations = extendType({
 
         console.log(partName);
       
-        return await ctx.db.item.create({ data: { partName: partName, saberPart: saberPart }});
+        return await ctx.db.item.create({ data: { partName: partName, saberPart: saberPart, userId: userId }});
       }
     })
   },
