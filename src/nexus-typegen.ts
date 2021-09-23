@@ -38,12 +38,12 @@ export interface NexusGenInputs {
   UserCreateInputArgs: { // input type
     username: string; // String!
   }
-  UserDetailsCreateInputArgs: { // input type
-    firstName: string; // String!
+  UserDetailsInputArgs: { // input type
+    firstName?: string | null; // String
     lastName?: string | null; // String
-    user: NexusGenInputs['UserDetailsCreateInputArgsUser']; // UserDetailsCreateInputArgsUser!
+    user: NexusGenInputs['UserDetailsInputArgsUser']; // UserDetailsInputArgsUser!
   }
-  UserDetailsCreateInputArgsUser: { // input type
+  UserDetailsInputArgsUser: { // input type
     id: string; // ID!
   }
   UserDetailsUpdateArgs: { // input type
@@ -101,6 +101,7 @@ export interface NexusGenFieldTypes {
     _deprecated_field: string | null; // String
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
+    userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
   }
   Query: { // field return type
     GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
@@ -132,6 +133,7 @@ export interface NexusGenFieldTypeNames {
     _deprecated_field: 'String'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
+    userDetailsUpdate: 'UserDetails'
   }
   Query: { // field return type name
     GetAllUserDetails: 'UserDetails'
@@ -160,7 +162,10 @@ export interface NexusGenArgTypes {
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
     }
     userDetailsCreate: { // args
-      input: NexusGenInputs['UserDetailsCreateInputArgs']; // UserDetailsCreateInputArgs!
+      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
+    }
+    userDetailsUpdate: { // args
+      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
     }
   }
   Query: {

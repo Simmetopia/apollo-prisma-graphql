@@ -1,4 +1,5 @@
-import { idArg, nonNull, objectType, extendType, inputObjectType, arg, list } from 'nexus';
+import { prisma } from '.prisma/client';
+import { idArg, nonNull, objectType, extendType, inputObjectType, arg, list, stringArg } from 'nexus';
 import { User, UserDetails } from 'nexus-prisma';
 
 export const userDetails = objectType({
@@ -44,6 +45,24 @@ export const UserDetailsQueries = extendType({
   },
 });
 
+export const UserDetailsInputArgs = inputObjectType({
+  name: 'UserDetailsInputArgs',
+  definition(t) {
+    t.field('user', {
+      type: nonNull(
+        inputObjectType({
+          name: 'UserDetailsInputArgsUser',
+          definition(t) {
+            t.nonNull.id('id');
+          },
+        }),
+      ),
+    }),
+      t.string('firstName');
+    t.string('lastName');
+  },
+});
+
 export const UserDetailsMutations = extendType({
   type: 'Mutation',
   definition(t) {
@@ -51,25 +70,7 @@ export const UserDetailsMutations = extendType({
       type: 'UserDetails',
       args: {
         input: arg({
-          type: nonNull(
-            inputObjectType({
-              name: 'UserDetailsCreateInputArgs',
-              definition(t) {
-                t.field('user', {
-                  type: nonNull(
-                    inputObjectType({
-                      name: 'UserDetailsCreateInputArgsUser',
-                      definition(t) {
-                        t.nonNull.id('id');
-                      },
-                    }),
-                  ),
-                }),
-                  t.nonNull.string('firstName');
-                t.string('lastName');
-              },
-            }),
-          ),
+          type: nonNull(UserDetailsInputArgs),
         }),
       },
       resolve: (
@@ -87,7 +88,36 @@ export const UserDetailsMutations = extendType({
           data: { firstName, lastName, userId },
         });
       },
-    });
+    }),
+      t.field('userDetailsUpdate', {
+        type: 'UserDetails',
+        args: {
+          input: arg({
+            type: nonNull(UserDetailsInputArgs),
+          }),
+        },
+        resolve: async (
+          source,
+          {
+            input: {
+              user: { id: userId },
+              firstName,
+              lastName,
+            },
+          },
+          context,
+        ) => {
+          const foundUserDetails = await context.db.userDetails.findFirst({ where: { userId } });
+
+          return context.db.userDetails.update({
+            where: { id: foundUserDetails?.id },
+            data: {
+              firstName: firstName,
+              lastName: lastName,
+            },
+          });
+        },
+      });
   },
 });
 //Hello simon
