@@ -50,16 +50,11 @@ export const ItemMutations = extendType({
       resolve: async (source, {userId}, ctx) => {
 
         const saberParts = ["Addon", "Body", "Emitter", "Pommel", "Switch"]
-        const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)];
-        
-        let partName = "~";
+        const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)]; 
+        const parts = readFileSync(__dirname + "/../assets/SaberParts/" + saberPart + "List.txt").toString();
+        const lines = parts.split('\r\n');
+        const partName = lines[Math.floor(Math.random() * lines.length)];
 
-        const variable = readFileSync(__dirname + "/../assets/SaberParts/" + saberPart + "List.txt").toString();
-        var lines = variable.split('\r\n');
-        partName = lines[Math.floor(Math.random() * lines.length)];
-
-        console.log(partName);
-      
         return await ctx.db.item.create({ data: { partName: partName, saberPart: saberPart, userId: userId }});
       }
     })
