@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { lorem, random } from 'faker';
+
 const client = new PrismaClient();
 
 const WEBSHOP_OWNER = 'dark_saber_dealer_69';
@@ -38,7 +39,6 @@ const createItems = async (amountOfItems: number) => {
   return items;
 };
 
-
 async function main() {
 
   await client.$connect();
@@ -49,6 +49,7 @@ async function main() {
       }
     })
   });
+  await Promise.all(saberPartPromises);
 
   const partNamePromisesInSecondDegree = createPartName().map(async partSet => {
    const partNames = await Promise.all(partSet.partList.map(async partName => {
@@ -63,6 +64,7 @@ async function main() {
     }))
     return partNames
   })
+  await Promise.all(partNamePromisesInSecondDegree);
 
   await client.user.create({
     data: {
