@@ -79,6 +79,7 @@ export interface NexusGenObjects {
   Query: {};
   User: { // root type
     id: string; // ID!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // root type
@@ -129,6 +130,7 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     id: string; // ID!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // field return type
@@ -170,6 +172,7 @@ export interface NexusGenFieldTypeNames {
   User: { // field return type name
     details: 'UserDetails'
     id: 'ID'
+    money: 'Int'
     username: 'String'
   }
   UserDetails: { // field return type name
