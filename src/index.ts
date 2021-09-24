@@ -17,9 +17,18 @@ const server = new ApolloServer({
       schema: join(__dirname, 'schema.graphql'), // 3
     },
   }),
-  context() {
+  context(fgh) {
+    const [_, token] = fgh.req.header('authorization')?.split(' ') ?? [];
+    if (token) {
+      // jwt parsing
+    }
+
     return {
       db: new PrismaClient(), // <-- You put Prisma client on the "db" context property
+      user: {
+        userId: 'something from token',
+        username: 'something from token',
+      },
     };
   },
 });
