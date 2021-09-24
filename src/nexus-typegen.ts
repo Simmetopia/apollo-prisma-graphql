@@ -65,8 +65,14 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  DeleteItemsNotOwnedResault: { // root type
+    ItemsDeleted: number; // Int!
+  }
   Item: { // root type
     id: string; // ID!
+    partDescription?: string | null; // String
+    partName?: string | null; // String
+    price?: number | null; // Int
     saberPart?: string | null; // String
   }
   Mutation: {};
@@ -93,16 +99,25 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  DeleteItemsNotOwnedResault: { // field return type
+    ItemsDeleted: number; // Int!
+  }
   Item: { // field return type
     id: string; // ID!
+    partDescription: string | null; // String
+    partName: string | null; // String
+    price: number | null; // Int
     saberPart: string | null; // String
   }
   Mutation: { // field return type
+    DeleteItemsNotOwned: NexusGenRootTypes['DeleteItemsNotOwnedResault'] | null; // DeleteItemsNotOwnedResault
+    ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
   }
   Query: { // field return type
+    GetAllItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
     GetUser: NexusGenRootTypes['User'] | null; // User
     GetUserByUsername: NexusGenRootTypes['User'] | null; // User
@@ -124,16 +139,25 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  DeleteItemsNotOwnedResault: { // field return type name
+    ItemsDeleted: 'Int'
+  }
   Item: { // field return type name
     id: 'ID'
+    partDescription: 'String'
+    partName: 'String'
+    price: 'Int'
     saberPart: 'String'
   }
   Mutation: { // field return type name
+    DeleteItemsNotOwned: 'DeleteItemsNotOwnedResault'
+    ItemCreate: 'Item'
     _deprecated_field: 'String'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
   }
   Query: { // field return type name
+    GetAllItems: 'Item'
     GetAllUserDetails: 'UserDetails'
     GetUser: 'User'
     GetUserByUsername: 'User'

@@ -18,7 +18,7 @@ const createItems = (amountOfItems: number) => {
 };
 
 async function main() {
-  await client.connect();
+  await client.$connect();
   await client.user.create({
     data: {
       username: WEBSHOP_OWNER,
@@ -32,5 +32,5 @@ async function main() {
 main()
   .catch((e) => console.error(e))
   .finally(async () => {
-    await client.disconnect();
+    await client.$disconnect();
   });
