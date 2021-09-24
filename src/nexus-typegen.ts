@@ -47,7 +47,9 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Item: { // root type
     id: string; // ID!
+    partName?: string | null; // String
     saberPart?: string | null; // String
+    userId?: string | null; // String
   }
   Mutation: {};
   Query: {};
@@ -74,15 +76,19 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   Item: { // field return type
     id: string; // ID!
+    partName: string | null; // String
     saberPart: string | null; // String
+    userId: string | null; // String
   }
   Mutation: { // field return type
     _deprecated_field: string | null; // String
+    itemCreate: NexusGenRootTypes['Item'] | null; // Item
     userCreate: NexusGenRootTypes['User'] | null; // User
     userLogin: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
     _deprecated_field: string | null; // String
+    items: NexusGenRootTypes['Item'][]; // [Item!]!
     myq: string | null; // String
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -99,15 +105,19 @@ export interface NexusGenFieldTypes {
 export interface NexusGenFieldTypeNames {
   Item: { // field return type name
     id: 'ID'
+    partName: 'String'
     saberPart: 'String'
+    userId: 'String'
   }
   Mutation: { // field return type name
     _deprecated_field: 'String'
+    itemCreate: 'Item'
     userCreate: 'User'
     userLogin: 'User'
   }
   Query: { // field return type name
     _deprecated_field: 'String'
+    items: 'Item'
     myq: 'String'
     users: 'User'
   }
@@ -123,6 +133,9 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    itemCreate: { // args
+      userId: string; // String!
+    }
     userCreate: { // args
       username: string; // String!
     }

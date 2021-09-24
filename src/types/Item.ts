@@ -1,8 +1,7 @@
-import { company, lorem, random } from 'faker';
-import { objectType, inputObjectType, idArg, arg, extendType } from 'nexus';
-import {Item} from "nexus-prisma"
 
-
+import { objectType, inputObjectType, extendType, stringArg, nonNull, list } from 'nexus';
+import { Item } from "nexus-prisma"
+import { readFileSync } from 'fs';
 
 export const item = objectType({
   name: Item.$name,
@@ -10,6 +9,12 @@ export const item = objectType({
     t.field(Item.id);
     t.field('saberPart', {
       type: 'String',
+    });
+    t.field('partName', {
+      type: 'String'
+    });
+    t.field('userId', {
+      type: 'String'
     });
   },
 });
@@ -26,12 +31,32 @@ export const ItemArgs = inputObjectType({
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
+    t.field("items", {
+      type: nonNull(list(nonNull('Item'))),
+      resolve: (source, args, ctx) =>
+      {
+        return ctx.db.item.findMany();
+      }
+    })
   },
 });
 
 export const ItemMutations = extendType({
   type: 'Mutation',
-  definition: (t) => {
+  definition(t) {
+    t.field('itemCreate', {
+      type: 'Item',
+      args: {userId: nonNull(stringArg())},
+      resolve: async (source, {userId}, ctx) => {
 
+        const saberParts = ["Addon", "Body", "Emitter", "Pommel", "Switch"]
+        const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)]; 
+        const parts = readFileSync(__dirname + "/../assets/SaberParts/" + saberPart + "List.txt").toString();
+        const lines = parts.split('\r\n');
+        const partName = lines[Math.floor(Math.random() * lines.length)];
+
+        return await ctx.db.item.create({ data: { partName: partName, saberPart: saberPart, userId: userId }});
+      }
+    })
   },
 });
