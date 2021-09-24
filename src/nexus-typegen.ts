@@ -14,6 +14,9 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  AddItemInputArgs: { // input type
+    id: string; // ID!
+  }
   BuyItemArgs: { // input type
     itemId: string; // ID!
     userId: string; // ID!
@@ -74,6 +77,7 @@ export interface NexusGenObjects {
     partName?: string | null; // String
     price?: number | null; // Int
     saberPart?: string | null; // String
+    userId?: string | null; // String
   }
   Mutation: {};
   Query: {};
@@ -103,13 +107,16 @@ export interface NexusGenFieldTypes {
     ItemsDeleted: number; // Int!
   }
   Item: { // field return type
+    User: NexusGenRootTypes['User'] | null; // User
     id: string; // ID!
     partDescription: string | null; // String
     partName: string | null; // String
     price: number | null; // Int
     saberPart: string | null; // String
+    userId: string | null; // String
   }
   Mutation: { // field return type
+    AddItemToUserTestMutation: NexusGenRootTypes['Item'] | null; // Item
     DeleteItemsNotOwned: NexusGenRootTypes['DeleteItemsNotOwnedResault'] | null; // DeleteItemsNotOwnedResault
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
@@ -129,6 +136,7 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     id: string; // ID!
+    inventory: NexusGenRootTypes['Item'][]; // [Item!]!
     username: string; // String!
   }
   UserDetails: { // field return type
@@ -144,13 +152,16 @@ export interface NexusGenFieldTypeNames {
     ItemsDeleted: 'Int'
   }
   Item: { // field return type name
+    User: 'User'
     id: 'ID'
     partDescription: 'String'
     partName: 'String'
     price: 'Int'
     saberPart: 'String'
+    userId: 'String'
   }
   Mutation: { // field return type name
+    AddItemToUserTestMutation: 'Item'
     DeleteItemsNotOwned: 'DeleteItemsNotOwnedResault'
     ItemCreate: 'Item'
     _deprecated_field: 'String'
@@ -170,6 +181,7 @@ export interface NexusGenFieldTypeNames {
   User: { // field return type name
     details: 'UserDetails'
     id: 'ID'
+    inventory: 'Item'
     username: 'String'
   }
   UserDetails: { // field return type name
@@ -182,6 +194,9 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    AddItemToUserTestMutation: { // args
+      input: NexusGenInputs['AddItemInputArgs']; // AddItemInputArgs!
+    }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
     }

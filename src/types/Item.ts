@@ -1,5 +1,6 @@
 import { company, lorem, random } from 'faker';
-import { objectType, inputObjectType, idArg, arg, extendType, nonNull, list } from 'nexus';
+import { Source } from 'graphql';
+import { objectType, inputObjectType, idArg, arg, extendType, nonNull, list, stringArg } from 'nexus';
 import { Item } from 'nexus-prisma';
 
 export const item = objectType({
@@ -18,6 +19,8 @@ export const item = objectType({
     t.field('price', {
       type: 'Int',
     });
+    t.field(Item.userId);
+    t.field(Item.User);
   },
 });
 
@@ -80,6 +83,29 @@ export const ItemMutations = extendType({
           where: { User: null },
         });
         return { ItemsDeleted: itemsdeleted.count };
+      },
+    });
+    t.field('AddItemToUserTestMutation', {
+      type: 'Item',
+      args: {
+        input: arg({
+          type: nonNull(
+            inputObjectType({
+              name: 'AddItemInputArgs',
+              definition(t) {
+                t.nonNull.id('id');
+              },
+            }),
+          ),
+        }),
+      },
+      resolve: async (Source, { input: { id } }, context) => {
+        const itemFound = await context.db.item.update({
+          where: { id: id },
+          //Added to user with userName hej
+          data: { userId: 'cktv70jyw00004sknxob85w6v' },
+        });
+        return itemFound;
       },
     });
   },
