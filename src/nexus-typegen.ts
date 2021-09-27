@@ -70,6 +70,7 @@ export interface NexusGenObjects {
   }
   Item: { // root type
     id: string; // ID!
+    inShop?: boolean | null; // Boolean
     partDescription?: string | null; // String
     partName?: string | null; // String
     price?: number | null; // Int
@@ -107,6 +108,7 @@ export interface NexusGenFieldTypes {
   Item: { // field return type
     User: NexusGenRootTypes['User'] | null; // User
     id: string; // ID!
+    inShop: boolean | null; // Boolean
     partDescription: string | null; // String
     partName: string | null; // String
     price: number | null; // Int
@@ -124,6 +126,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     GetAllItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
+    GetAllItemsInShop: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
     GetUser: NexusGenRootTypes['User'] | null; // User
     GetUserByUsername: NexusGenRootTypes['User'] | null; // User
@@ -153,6 +156,7 @@ export interface NexusGenFieldTypeNames {
   Item: { // field return type name
     User: 'User'
     id: 'ID'
+    inShop: 'Boolean'
     partDescription: 'String'
     partName: 'String'
     price: 'Int'
@@ -170,6 +174,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     GetAllItems: 'Item'
+    GetAllItemsInShop: 'Item'
     GetAllUserDetails: 'UserDetails'
     GetUser: 'User'
     GetUserByUsername: 'User'
