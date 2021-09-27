@@ -1,9 +1,6 @@
-import { User, $settings } from 'nexus-prisma';
-import { objectType, inputObjectType, extendType, arg, nonNull, stringArg, list } from 'nexus';
-import { resolve } from 'path/posix';
-import { NotFound } from 'http-errors';
-import { prisma } from '.prisma/client';
 import { AuthenticationError } from 'apollo-server-errors';
+import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
+import { User } from 'nexus-prisma';
 
 export const user = objectType({
   name: User.$name,
@@ -11,6 +8,7 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.inventory);
   },
 });
 
