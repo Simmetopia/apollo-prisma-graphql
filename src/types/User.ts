@@ -148,7 +148,7 @@ export const UserMutations = extendType({
           }),
         ),
       },
-      resolve: async (souce, { input: { itemId, userId } }, context) => {
+      resolve: async (source, { input: { itemId, userId } }, context) => {
         const result = await context.db.$transaction(async (prisma) => {
           const foundItem = await prisma.item.findFirst({
             where: {
