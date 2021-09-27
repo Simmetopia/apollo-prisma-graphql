@@ -1,4 +1,4 @@
-import { User, $settings } from 'nexus-prisma';
+import { User, $settings, Item } from 'nexus-prisma';
 import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
 import { AuthenticationError } from 'apollo-server-errors';
 import * as fs from 'fs';
@@ -86,6 +86,20 @@ export const UserQueries = extendType({
   },
 });
 
+export const BuyItemArgs = inputObjectType({
+  name: 'BuyItemArgs',
+  nonNullDefaults: { input: true },
+  definition: (t) => {
+    t.id('userId');
+    t.id('itemId');
+  },
+});
+
+export const BuyAndSellItems = extendType({
+  type: 'Mutation',
+  definition(t) {},
+});
+
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
@@ -125,19 +139,69 @@ export const UserMutations = extendType({
         }
       },
     });
-  },
-});
+    t.field('buyItem', {
+      type: 'User',
+      args: {
+        input: nonNull(
+          arg({
+            type: BuyItemArgs,
+          }),
+        ),
+      },
+      resolve: async (source, { input: { itemId, userId } }, context) => {
+        const result = await context.db.$transaction(async (prisma) => {
+          const foundItem = await prisma.item.findFirst({
+            where: {
+              id: itemId,
+            },
+          });
 
-export const BuyItemArgs = inputObjectType({
-  name: 'BuyItemArgs',
-  nonNullDefaults: { input: true },
-  definition: (t) => {
-    t.id('userId');
-    t.id('itemId');
-  },
-});
+          const currentOwner = foundItem?.userId;
 
-export const BuyAndSellItems = extendType({
-  type: 'Mutation',
-  definition(t) {},
+          if (foundItem != null) {
+            const buyUser = await prisma.user.update({
+              data: {
+                money: {
+                  decrement: foundItem.price || 0,
+                },
+              },
+              where: {
+                id: userId,
+              },
+            });
+
+            if (buyUser.money < 0) {
+              throw new Error('You do not have enough money!!!');
+            }
+
+            const updateItem = await prisma.item.update({
+              data: {
+                userId: userId,
+              },
+              where: {
+                id: itemId,
+              },
+            });
+
+            if (currentOwner != null) {
+              const sellUser = await prisma.user.update({
+                data: {
+                  money: {
+                    increment: foundItem.price || 0,
+                  },
+                },
+                where: {
+                  id: currentOwner,
+                },
+              });
+            }
+
+            return buyUser;
+          }
+        });
+
+        return result ?? null;
+      },
+    });
+  },
 });
