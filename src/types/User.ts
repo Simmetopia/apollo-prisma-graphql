@@ -1,4 +1,4 @@
-import { User, $settings } from 'nexus-prisma';
+import { User, $settings, Item } from 'nexus-prisma';
 import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
 import { AuthenticationError } from 'apollo-server-errors';
 import * as fs from 'fs';
@@ -140,7 +140,7 @@ export const UserMutations = extendType({
       },
     });
     t.field('buyItem', {
-      type: 'Item',
+      type: 'User',
       args: {
         input: nonNull(
           arg({
@@ -149,17 +149,58 @@ export const UserMutations = extendType({
         ),
       },
       resolve: async (souce, { input: { itemId, userId } }, context) => {
-        await context.db.$transaction(async (prisma) => {
-          const item = await prisma.item.findFirst({
+        const result = await context.db.$transaction(async (prisma) => {
+          const foundItem = await prisma.item.findFirst({
             where: {
               id: itemId,
             },
           });
 
-          const currentOwner = item?.userId;
+          const currentOwner = foundItem?.userId;
 
-          const user = await prisma.user.update();
+          if (foundItem != null) {
+            const buyUser = await prisma.user.update({
+              data: {
+                money: {
+                  decrement: foundItem.price || 0,
+                },
+              },
+              where: {
+                id: userId,
+              },
+            });
+
+            if (buyUser.money < 0) {
+              throw new Error('You do not have enough money!!!');
+            }
+
+            const updateItem = await prisma.item.update({
+              data: {
+                userId: userId,
+              },
+              where: {
+                id: itemId,
+              },
+            });
+
+            if (currentOwner != null) {
+              const sellUser = await prisma.user.update({
+                data: {
+                  money: {
+                    increment: foundItem.price || 0,
+                  },
+                },
+                where: {
+                  id: currentOwner,
+                },
+              });
+            }
+
+            return buyUser;
+          }
         });
+
+        return result ?? null;
       },
     });
   },
