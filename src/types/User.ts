@@ -1,6 +1,7 @@
 import { User, $settings } from 'nexus-prisma';
 import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
 import { AuthenticationError } from 'apollo-server-errors';
+import * as fs from 'fs';
 
 export const user = objectType({
   name: User.$name,
@@ -10,6 +11,7 @@ export const user = objectType({
     t.field(User.username);
     t.field(User.details);
     t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
@@ -105,7 +107,16 @@ export const UserMutations = extendType({
         const user = await context.db.user.findFirst({
           where: { username: username },
         });
+        const swearWords = fs.readFileSync(__dirname + '/../types/txtFiles/badWords.txt', 'utf8');
+
+        const swear = swearWords.split('\n');
+
         if (user === null) {
+          swear.map((word) => {
+            if (username.toLocaleLowerCase().includes(word)) {
+              throw new AuthenticationError(word + ' is a bad word. Swear words are not allowed');
+            }
+          });
           return await context.db.user.create({
             data: { username: username, money: 999 },
           });

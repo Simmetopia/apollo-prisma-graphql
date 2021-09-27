@@ -74,6 +74,7 @@ export interface NexusGenObjects {
     partName?: string | null; // String
     price?: number | null; // Int
     saberPart?: string | null; // String
+    userId?: string | null; // String
   }
   Mutation: {};
   Query: {};
@@ -104,11 +105,13 @@ export interface NexusGenFieldTypes {
     ItemsDeleted: number; // Int!
   }
   Item: { // field return type
+    User: NexusGenRootTypes['User'] | null; // User
     id: string; // ID!
     partDescription: string | null; // String
     partName: string | null; // String
     price: number | null; // Int
     saberPart: string | null; // String
+    userId: string | null; // String
   }
   Mutation: { // field return type
     DeleteItemsNotOwned: NexusGenRootTypes['DeleteItemsNotOwnedResault'] | null; // DeleteItemsNotOwnedResault
@@ -130,6 +133,7 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     id: string; // ID!
+    inventory: NexusGenRootTypes['Item'][]; // [Item!]!
     money: number; // Int!
     username: string; // String!
   }
@@ -146,11 +150,13 @@ export interface NexusGenFieldTypeNames {
     ItemsDeleted: 'Int'
   }
   Item: { // field return type name
+    User: 'User'
     id: 'ID'
     partDescription: 'String'
     partName: 'String'
     price: 'Int'
     saberPart: 'String'
+    userId: 'String'
   }
   Mutation: { // field return type name
     DeleteItemsNotOwned: 'DeleteItemsNotOwnedResault'
@@ -172,6 +178,7 @@ export interface NexusGenFieldTypeNames {
   User: { // field return type name
     details: 'UserDetails'
     id: 'ID'
+    inventory: 'Item'
     money: 'Int'
     username: 'String'
   }
