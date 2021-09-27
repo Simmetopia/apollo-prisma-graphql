@@ -21,6 +21,7 @@ export const item = objectType({
     });
     t.field(Item.userId);
     t.field(Item.User);
+    t.field(Item.inShop);
   },
 });
 
@@ -40,6 +41,12 @@ export const ItemQueries = extendType({
       type: list('Item'),
       resolve: async (source, args, context) => {
         return await context.db.item.findMany();
+      },
+    });
+    t.field('GetAllItemsInShop', {
+      type: list('Item'),
+      resolve: async (Source, args, context) => {
+        return await context.db.item.findMany({ where: { inShop: true } });
       },
     });
   },
@@ -67,6 +74,7 @@ export const ItemMutations = extendType({
             price: Math.round(Math.random() * (1000 - 1) + 1),
             partName: partNames[Math.floor(Math.random() * partNames.length)],
             partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
+            inShop: true,
           },
         });
       },
