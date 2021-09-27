@@ -85,28 +85,5 @@ export const ItemMutations = extendType({
         return { ItemsDeleted: itemsdeleted.count };
       },
     });
-    t.field('AddItemToUserTestMutation', {
-      type: 'Item',
-      args: {
-        input: arg({
-          type: nonNull(
-            inputObjectType({
-              name: 'AddItemInputArgs',
-              definition(t) {
-                t.nonNull.id('id');
-              },
-            }),
-          ),
-        }),
-      },
-      resolve: async (Source, { input: { id } }, context) => {
-        const itemFound = await context.db.item.update({
-          where: { id: id },
-          //Added to user with userName hej
-          data: { userId: 'cktv70jyw00004sknxob85w6v' },
-        });
-        return itemFound;
-      },
-    });
   },
 });
