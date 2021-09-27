@@ -2,7 +2,7 @@
 import { objectType, inputObjectType, extendType, stringArg, nonNull, list } from 'nexus';
 import { Item } from "nexus-prisma"
 import { readFileSync } from 'fs';
-import { lorem } from 'faker';
+import { datatype, lorem, random } from 'faker';
 
 export const item = objectType({
   name: Item.$name,
@@ -57,17 +57,17 @@ export const ItemMutations = extendType({
       resolve: async (source, { userId }, ctx) => {
 
         const saberParts = await ctx.db.saberPart.findMany();
-        const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)]
-        const partNames = await ctx.db.partName.findMany( {where: {saberPartId: saberPart.id}});
+        const saberPart = random.arrayElement(saberParts);
 
-        return await ctx.db.item.create({ 
-          data: 
-          { 
-            partName: partNames[Math.floor(Math.random() * partNames.length)].name, 
-            partDescription: lorem.paragraph(), 
-            saberPart: saberPart.name, 
-            userId: userId, 
-            price: Math.floor(Math.random() * 299)
+        const partNames = await ctx.db.partName.findMany({ where: { saberPartId: saberPart.id } });
+
+        return await ctx.db.item.create({
+          data: {
+            partName: random.arrayElement(partNames).name,
+            partDescription: lorem.paragraph(),
+            saberPart: saberPart.name,
+            price: datatype.number(500),
+            userId
           }
         });
       }
