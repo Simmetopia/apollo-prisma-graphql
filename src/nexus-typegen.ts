@@ -14,9 +14,6 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  AddItemInputArgs: { // input type
-    id: string; // ID!
-  }
   BuyItemArgs: { // input type
     itemId: string; // ID!
     userId: string; // ID!
@@ -116,10 +113,10 @@ export interface NexusGenFieldTypes {
     userId: string | null; // String
   }
   Mutation: { // field return type
-    AddItemToUserTestMutation: NexusGenRootTypes['Item'] | null; // Item
     DeleteItemsNotOwned: NexusGenRootTypes['DeleteItemsNotOwnedResault'] | null; // DeleteItemsNotOwnedResault
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
+    buyItem: NexusGenRootTypes['Item'] | null; // Item
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
@@ -161,10 +158,10 @@ export interface NexusGenFieldTypeNames {
     userId: 'String'
   }
   Mutation: { // field return type name
-    AddItemToUserTestMutation: 'Item'
     DeleteItemsNotOwned: 'DeleteItemsNotOwnedResault'
     ItemCreate: 'Item'
     _deprecated_field: 'String'
+    buyItem: 'Item'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
     userDetailsUpdate: 'UserDetails'
@@ -194,8 +191,8 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    AddItemToUserTestMutation: { // args
-      input: NexusGenInputs['AddItemInputArgs']; // AddItemInputArgs!
+    buyItem: { // args
+      input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
     }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!

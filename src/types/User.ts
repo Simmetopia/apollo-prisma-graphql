@@ -84,6 +84,20 @@ export const UserQueries = extendType({
   },
 });
 
+export const BuyItemArgs = inputObjectType({
+  name: 'BuyItemArgs',
+  nonNullDefaults: { input: true },
+  definition: (t) => {
+    t.id('userId');
+    t.id('itemId');
+  },
+});
+
+export const BuyAndSellItems = extendType({
+  type: 'Mutation',
+  definition(t) {},
+});
+
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
@@ -114,19 +128,28 @@ export const UserMutations = extendType({
         }
       },
     });
-  },
-});
+    t.field('buyItem', {
+      type: 'Item',
+      args: {
+        input: nonNull(
+          arg({
+            type: BuyItemArgs,
+          }),
+        ),
+      },
+      resolve: async (souce, { input: { itemId, userId } }, context) => {
+        await context.db.$transaction(async (prisma) => {
+          const item = await prisma.item.findFirst({
+            where: {
+              id: itemId,
+            },
+          });
 
-export const BuyItemArgs = inputObjectType({
-  name: 'BuyItemArgs',
-  nonNullDefaults: { input: true },
-  definition: (t) => {
-    t.id('userId');
-    t.id('itemId');
-  },
-});
+          const currentOwner = item?.userId;
 
-export const BuyAndSellItems = extendType({
-  type: 'Mutation',
-  definition(t) {},
+          const user = await prisma.user.update();
+        });
+      },
+    });
+  },
 });
