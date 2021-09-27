@@ -112,7 +112,7 @@ export const UserMutations = extendType({
         if (user === null) {
           swear.map((word) => {
             if (username.toLocaleLowerCase().includes(word)) {
-              throw new AuthenticationError(word + ' is a bad word. Swear words is not allowed');
+              throw new AuthenticationError(word + ' is a bad word. Swear words are not allowed');
             }
           });
           return await context.db.user.create({
