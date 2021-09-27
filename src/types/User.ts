@@ -177,6 +177,7 @@ export const UserMutations = extendType({
             const updateItem = await prisma.item.update({
               data: {
                 userId: userId,
+                inShop: false,
               },
               where: {
                 id: itemId,
