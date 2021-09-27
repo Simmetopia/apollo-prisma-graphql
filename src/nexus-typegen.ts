@@ -80,6 +80,7 @@ export interface NexusGenObjects {
   Query: {};
   User: { // root type
     id: string; // ID!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // root type
@@ -134,6 +135,7 @@ export interface NexusGenFieldTypes {
     details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     id: string; // ID!
     inventory: NexusGenRootTypes['Item'][]; // [Item!]!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // field return type
@@ -179,6 +181,7 @@ export interface NexusGenFieldTypeNames {
     details: 'UserDetails'
     id: 'ID'
     inventory: 'Item'
+    money: 'Int'
     username: 'String'
   }
   UserDetails: { // field return type name
@@ -191,9 +194,12 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+<<<<<<< HEAD
     buyItem: { // args
       input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
     }
+=======
+>>>>>>> develop
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
     }
