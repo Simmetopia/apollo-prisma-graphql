@@ -36,3 +36,16 @@ model Item {
   User            User?   @relation(fields: [userId], references: [id])
   userId          String?
 }
+
+model SaberPart {
+  id              String  @id @default(cuid())
+  name            String
+  part            PartName[]
+}
+
+model PartName {
+  id              String       @id @default(cuid())
+  name            String
+  SaberPart       SaberPart? @relation(fields: [saberPartId], references: [id])
+  saberPartId     String?
+}
