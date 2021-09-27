@@ -53,7 +53,6 @@ export const ItemMutations = extendType({
         const saberParts = await ctx.db.saberPart.findMany();
         const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)]
         const partNames = await ctx.db.partName.findMany( {where: {saberPartId: saberPart.id}});
-    
 
         return await ctx.db.item.create({ 
           data: 
