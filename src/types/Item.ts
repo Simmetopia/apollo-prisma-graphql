@@ -1,5 +1,6 @@
 import { company, lorem, random } from 'faker';
-import { objectType, inputObjectType, idArg, arg, extendType, nonNull, list } from 'nexus';
+import { Source } from 'graphql';
+import { objectType, inputObjectType, idArg, arg, extendType, nonNull, list, stringArg } from 'nexus';
 import { Item } from 'nexus-prisma';
 
 export const item = objectType({
@@ -18,6 +19,8 @@ export const item = objectType({
     t.field('price', {
       type: 'Int',
     });
+    t.field(Item.userId);
+    t.field(Item.User);
   },
 });
 
