@@ -120,6 +120,7 @@ export interface NexusGenFieldTypes {
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
     buyItem: NexusGenRootTypes['User'] | null; // User
+    updateOrCreateUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
@@ -168,6 +169,7 @@ export interface NexusGenFieldTypeNames {
     ItemCreate: 'Item'
     _deprecated_field: 'String'
     buyItem: 'User'
+    updateOrCreateUserDetails: 'UserDetails'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
     userDetailsUpdate: 'UserDetails'
@@ -201,6 +203,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     buyItem: { // args
       input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
+    }
+    updateOrCreateUserDetails: { // args
+      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
     }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
