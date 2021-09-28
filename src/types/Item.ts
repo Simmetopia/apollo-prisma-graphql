@@ -1,22 +1,16 @@
-
-import { objectType, inputObjectType, extendType, stringArg, nonNull, list } from 'nexus';
-import { Item, PartName, SaberPart } from "nexus-prisma"
-import { readFileSync } from 'fs';
 import { datatype, lorem, random } from 'faker';
+import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
+import { Item, PartName, SaberPart } from "nexus-prisma";
 
 export const item = objectType({
   name: Item.$name,
   definition(t) {
     t.field(Item.id);
-    t.field('SaberPart', {
-      type: 'SaberPart'
-    });
-    t.field('PartName', {
-      type: 'PartName'
-    });
-    t.field('userId', {
-      type: 'String'
-    });
+    t.field(Item.SaberPart);
+    t.field(Item.PartName);
+    t.field(Item.partDescription);
+    t.field(Item.price);
+    t.field(Item.userId);
   },
 });
 

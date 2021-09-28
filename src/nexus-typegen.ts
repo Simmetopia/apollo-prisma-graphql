@@ -46,9 +46,9 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Item: { // root type
-    PartName?: NexusGenRootTypes['PartName'] | null; // PartName
-    SaberPart?: NexusGenRootTypes['SaberPart'] | null; // SaberPart
     id: string; // ID!
+    partDescription?: string | null; // String
+    price?: number | null; // Float
     userId?: string | null; // String
   }
   Mutation: {};
@@ -86,6 +86,8 @@ export interface NexusGenFieldTypes {
     PartName: NexusGenRootTypes['PartName'] | null; // PartName
     SaberPart: NexusGenRootTypes['SaberPart'] | null; // SaberPart
     id: string; // ID!
+    partDescription: string | null; // String
+    price: number | null; // Float
     userId: string | null; // String
   }
   Mutation: { // field return type
@@ -125,6 +127,8 @@ export interface NexusGenFieldTypeNames {
     PartName: 'PartName'
     SaberPart: 'SaberPart'
     id: 'ID'
+    partDescription: 'String'
+    price: 'Float'
     userId: 'String'
   }
   Mutation: { // field return type name

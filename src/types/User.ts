@@ -55,14 +55,14 @@ export const UserMutations = extendType({
       type: 'User',
       args: {username: nonNull(stringArg())},
       resolve: async (source, {username}, ctx) => {
-        
+
         const user = await ctx.db.user.findFirst( {where: {username} });
 
         if(user)
         {
           throw new AuthenticationError("Username already in use" )
         }
-        
+
         return await ctx.db.user.create({data: {username, money:200}})
       }
     });
@@ -71,7 +71,7 @@ export const UserMutations = extendType({
       args: {username: nonNull(stringArg())},
       resolve: async (source, {username}, ctx) => {
 
-        const user = await ctx.db.user.findFirst( {where: {username} });
+        const user = await ctx.db.user.findFirst( {where: {username}, include: {inventory: true }})
 
         if(!user)
         {
