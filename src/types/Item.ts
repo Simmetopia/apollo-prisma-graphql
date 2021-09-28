@@ -62,6 +62,24 @@ var partDescriptions: string[] = [
   'LEGENDARY! Hurry up and get it',
 ];
 
+export const setSellPriceInputArgs = inputObjectType({
+  name: 'setSellPriceInputArgs',
+  definition(t) {
+    t.field('Item', {
+      type: nonNull(
+        inputObjectType({
+          name: 'setSellPriceInputArgsItem',
+          definition(t) {
+            t.nonNull.id('id');
+            t.nonNull.int('price');
+            t.nonNull.boolean('inShop');
+          },
+        }),
+      ),
+    });
+  },
+});
+
 export const ItemMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
@@ -91,6 +109,33 @@ export const ItemMutations = extendType({
           where: { User: null },
         });
         return { ItemsDeleted: itemsdeleted.count };
+      },
+    });
+    t.field('setSellPrice', {
+      type: 'Item',
+      args: {
+        input: nonNull(
+          arg({
+            type: setSellPriceInputArgs,
+          }),
+        ),
+      },
+      resolve: async (
+        source,
+        {
+          input: {
+            Item: { id, price, inShop },
+          },
+        },
+        context,
+      ) => {
+        return context.db.item.update({
+          where: { id: id },
+          data: {
+            price: price,
+            inShop: inShop,
+          },
+        });
       },
     });
   },
