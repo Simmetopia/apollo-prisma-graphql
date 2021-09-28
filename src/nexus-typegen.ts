@@ -51,6 +51,14 @@ export interface NexusGenInputs {
     id?: string | null; // ID
     lastName?: string | null; // String
   }
+  setSellPriceInputArgs: { // input type
+    Item: NexusGenInputs['setSellPriceInputArgsItem']; // setSellPriceInputArgsItem!
+  }
+  setSellPriceInputArgsItem: { // input type
+    id: string; // ID!
+    inShop: boolean; // Boolean!
+    price: number; // Int!
+  }
 }
 
 export interface NexusGenEnums {
@@ -120,6 +128,7 @@ export interface NexusGenFieldTypes {
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
     buyItem: NexusGenRootTypes['User'] | null; // User
+    setSellPrice: NexusGenRootTypes['Item'] | null; // Item
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
@@ -168,6 +177,7 @@ export interface NexusGenFieldTypeNames {
     ItemCreate: 'Item'
     _deprecated_field: 'String'
     buyItem: 'User'
+    setSellPrice: 'Item'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
     userDetailsUpdate: 'UserDetails'
@@ -201,6 +211,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     buyItem: { // args
       input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
+    }
+    setSellPrice: { // args
+      input: NexusGenInputs['setSellPriceInputArgs']; // setSellPriceInputArgs!
     }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
