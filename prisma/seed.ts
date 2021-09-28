@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { lorem, random } from 'faker';
+import { datatype, lorem, random } from 'faker';
 
-const client = new PrismaClient();
+const client = new PrismaClient(/*{ log: ['query', 'info'] }*/);
 
 const WEBSHOP_OWNER = 'dark_saber_dealer_69';
 
@@ -21,18 +21,19 @@ const createPartName = () => {
 
 const createItems = async (amountOfItems: number) => {
   const items = [];
-  
+
   for (let i = 0; i < amountOfItems; i++) 
   {
     const saberParts = await client.saberPart.findMany();
-    const saberPart = saberParts[Math.floor(Math.random() * saberParts.length)]
+    const saberPart = random.arrayElement(saberParts);
     const partNames = await client.partName.findMany( {where: {saberPartId: saberPart.id}});
+    const partName = random.arrayElement(partNames);
 
     items.push({
-      saberPart: saberPart.name,
+      SaberPart: {connect: {id: saberPart.id}},
+      PartName: {connect: {id: partName.id}},
       partDescription: lorem.paragraph(),
-      partName: partNames[Math.floor(Math.random() * partNames.length)].name,
-      price: Math.floor(random.number(300)),
+      price: datatype.number(300),
     });
   }
 
@@ -54,7 +55,7 @@ async function main() {
   const partNamePromisesInSecondDegree = createPartName().map(async partSet => {
    const partNames = await Promise.all(partSet.partList.map(async partName => {
       const saberPart = await client.saberPart.findFirst({where: {name: partSet.saberPart}})
-      
+
       return client.partName.create({
         data: {
           name: partName,
@@ -69,11 +70,11 @@ async function main() {
   await client.user.create({
     data: {
       username: WEBSHOP_OWNER,
-      inventory: {  create: await createItems(10) },
+      inventory: { create: await createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,
     },
-  });
+  })
 }
 
 main()

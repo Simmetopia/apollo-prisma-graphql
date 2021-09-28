@@ -1,22 +1,32 @@
-
-import { objectType, inputObjectType, extendType, stringArg, nonNull, list } from 'nexus';
-import { Item } from "nexus-prisma"
-import { readFileSync } from 'fs';
 import { datatype, lorem, random } from 'faker';
+import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
+import { Item, PartName, SaberPart } from "nexus-prisma";
 
 export const item = objectType({
   name: Item.$name,
   definition(t) {
     t.field(Item.id);
-    t.field('saberPart', {
-      type: 'String',
-    });
-    t.field('partName', {
-      type: 'String'
-    });
-    t.field('userId', {
-      type: 'String'
-    });
+    t.field(Item.SaberPart);
+    t.field(Item.PartName);
+    t.field(Item.partDescription);
+    t.field(Item.price);
+    t.field(Item.userId);
+  },
+});
+
+export const saberPart = objectType({
+  name: SaberPart.$name,
+  definition(t) {
+    t.field(SaberPart.id);
+    t.field(SaberPart.name);
+  },
+});
+
+export const partName = objectType({
+  name: PartName.$name,
+  definition(t) {
+    t.field(PartName.id);
+    t.field(PartName.name);
   },
 });
 
@@ -63,10 +73,10 @@ export const ItemMutations = extendType({
 
         return await ctx.db.item.create({
           data: {
-            partName: random.arrayElement(partNames).name,
+            saberPartId: saberPart.id,
+            partNameId: random.arrayElement(partNames).id,
             partDescription: lorem.paragraph(),
-            saberPart: saberPart.name,
-            price: datatype.number(500),
+            price: datatype.number(300),
             userId
           }
         });

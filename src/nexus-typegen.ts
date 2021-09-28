@@ -47,12 +47,20 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Item: { // root type
     id: string; // ID!
-    partName?: string | null; // String
-    saberPart?: string | null; // String
+    partDescription?: string | null; // String
+    price?: number | null; // Float
     userId?: string | null; // String
   }
   Mutation: {};
+  PartName: { // root type
+    id: string; // ID!
+    name: string; // String!
+  }
   Query: {};
+  SaberPart: { // root type
+    id: string; // ID!
+    name: string; // String!
+  }
   User: { // root type
     id: string; // ID!
     money: number; // Int!
@@ -78,9 +86,11 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   Item: { // field return type
+    PartName: NexusGenRootTypes['PartName'] | null; // PartName
+    SaberPart: NexusGenRootTypes['SaberPart'] | null; // SaberPart
     id: string; // ID!
-    partName: string | null; // String
-    saberPart: string | null; // String
+    partDescription: string | null; // String
+    price: number | null; // Float
     userId: string | null; // String
   }
   Mutation: { // field return type
@@ -88,6 +98,10 @@ export interface NexusGenFieldTypes {
     itemCreate: NexusGenRootTypes['Item'] | null; // Item
     userCreate: NexusGenRootTypes['User'] | null; // User
     userLogin: NexusGenRootTypes['User'] | null; // User
+  }
+  PartName: { // field return type
+    id: string; // ID!
+    name: string; // String!
   }
   Query: { // field return type
     _deprecated_field: string | null; // String
@@ -97,8 +111,13 @@ export interface NexusGenFieldTypes {
     userDetails: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
+  SaberPart: { // field return type
+    id: string; // ID!
+    name: string; // String!
+  }
   User: { // field return type
     id: string; // ID!
+    inventory: NexusGenRootTypes['Item'][]; // [Item!]!
     money: number; // Int!
     username: string; // String!
   }
@@ -112,9 +131,11 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   Item: { // field return type name
+    PartName: 'PartName'
+    SaberPart: 'SaberPart'
     id: 'ID'
-    partName: 'String'
-    saberPart: 'String'
+    partDescription: 'String'
+    price: 'Float'
     userId: 'String'
   }
   Mutation: { // field return type name
@@ -122,6 +143,10 @@ export interface NexusGenFieldTypeNames {
     itemCreate: 'Item'
     userCreate: 'User'
     userLogin: 'User'
+  }
+  PartName: { // field return type name
+    id: 'ID'
+    name: 'String'
   }
   Query: { // field return type name
     _deprecated_field: 'String'
@@ -131,8 +156,13 @@ export interface NexusGenFieldTypeNames {
     userDetails: 'User'
     users: 'User'
   }
+  SaberPart: { // field return type name
+    id: 'ID'
+    name: 'String'
+  }
   User: { // field return type name
     id: 'ID'
+    inventory: 'Item'
     money: 'Int'
     username: 'String'
   }
