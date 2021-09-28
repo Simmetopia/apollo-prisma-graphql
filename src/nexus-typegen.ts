@@ -63,11 +63,14 @@ export interface NexusGenObjects {
   }
   User: { // root type
     id: string; // ID!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // root type
+    firstName?: string | null; // String
     id: string; // ID!
     lastName?: string | null; // String
+    userId: string; // String!
   }
 }
 
@@ -105,6 +108,7 @@ export interface NexusGenFieldTypes {
     displayItems: NexusGenRootTypes['Item'][]; // [Item!]!
     items: NexusGenRootTypes['Item'][]; // [Item!]!
     myq: string | null; // String
+    userDetails: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
   SaberPart: { // field return type
@@ -114,11 +118,14 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     id: string; // ID!
     inventory: NexusGenRootTypes['Item'][]; // [Item!]!
+    money: number; // Int!
     username: string; // String!
   }
   UserDetails: { // field return type
+    firstName: string | null; // String
     id: string; // ID!
     lastName: string | null; // String
+    userId: string; // String!
   }
 }
 
@@ -146,6 +153,7 @@ export interface NexusGenFieldTypeNames {
     displayItems: 'Item'
     items: 'Item'
     myq: 'String'
+    userDetails: 'User'
     users: 'User'
   }
   SaberPart: { // field return type name
@@ -155,11 +163,14 @@ export interface NexusGenFieldTypeNames {
   User: { // field return type name
     id: 'ID'
     inventory: 'Item'
+    money: 'Int'
     username: 'String'
   }
   UserDetails: { // field return type name
+    firstName: 'String'
     id: 'ID'
     lastName: 'String'
+    userId: 'String'
   }
 }
 
@@ -177,6 +188,9 @@ export interface NexusGenArgTypes {
   }
   Query: {
     displayItems: { // args
+      userId: string; // String!
+    }
+    userDetails: { // args
       userId: string; // String!
     }
   }

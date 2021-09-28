@@ -9,6 +9,7 @@ export const user = objectType({
     t.field(User.id);
     t.field(User.username);
     t.field(User.inventory);
+    t.field(User.money);
   },
 });
 
@@ -45,37 +46,43 @@ export const UserQueries = extendType({
         return ctx.db.user.findMany();
       },
     });
+    t.field('userDetails', {
+      type: 'User',
+      args: { userId: nonNull(stringArg()) },
+      resolve: async (source, { userId }, context) => {
+        return await context.db.user.findFirst({ where: { id: userId } });
+      },
+    });
   },
 });
+
 
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('userCreate', {
       type: 'User',
-      args: {username: nonNull(stringArg())},
-      resolve: async (source, {username}, ctx) => {
+      args: { username: nonNull(stringArg()) },
+      resolve: async (source, { username }, ctx) => {
 
-        const user = await ctx.db.user.findFirst( {where: {username} });
+        const user = await ctx.db.user.findFirst({ where: { username } });
 
-        if(user)
-        {
-          throw new AuthenticationError("Username already in use" )
+        if (user) {
+          throw new AuthenticationError("Username already in use")
         }
 
-        return await ctx.db.user.create({data: {username, money:200}})
+        return await ctx.db.user.create({ data: { username, money: 200 } })
       }
     });
     t.field('userLogin', {
       type: 'User',
-      args: {username: nonNull(stringArg())},
-      resolve: async (source, {username}, ctx) => {
+      args: { username: nonNull(stringArg()) },
+      resolve: async (source, { username }, ctx) => {
 
         const user = await ctx.db.user.findFirst( {where: {username}, include: {inventory: true }})
 
-        if(!user)
-        {
-          throw new AuthenticationError("User not found: " + username )
+        if (!user) {
+          throw new AuthenticationError("User not found: " + username)
         }
 
         return user;
@@ -95,5 +102,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) { },
 });
