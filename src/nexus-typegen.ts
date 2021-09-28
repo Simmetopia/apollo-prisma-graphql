@@ -88,6 +88,7 @@ export interface NexusGenFieldTypes {
   Item: { // field return type
     PartName: NexusGenRootTypes['PartName'] | null; // PartName
     SaberPart: NexusGenRootTypes['SaberPart'] | null; // SaberPart
+    User: NexusGenRootTypes['User'] | null; // User
     id: string; // ID!
     partDescription: string | null; // String
     price: number | null; // Float
@@ -133,6 +134,7 @@ export interface NexusGenFieldTypeNames {
   Item: { // field return type name
     PartName: 'PartName'
     SaberPart: 'SaberPart'
+    User: 'User'
     id: 'ID'
     partDescription: 'String'
     price: 'Float'
@@ -188,7 +190,7 @@ export interface NexusGenArgTypes {
   }
   Query: {
     displayItems: { // args
-      userId: string; // String!
+      username: string; // String!
     }
     userDetails: { // args
       userId: string; // String!
