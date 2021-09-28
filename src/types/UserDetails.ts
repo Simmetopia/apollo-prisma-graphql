@@ -118,6 +118,41 @@ export const UserDetailsMutations = extendType({
           });
         },
       });
+    t.field('updateOrCreateUserDetails', {
+      type: 'UserDetails',
+      args: {
+        input: arg({
+          type: nonNull(UserDetailsInputArgs),
+        }),
+      },
+      resolve: async (
+        source,
+        {
+          input: {
+            user: { id: userId },
+            firstName,
+            lastName,
+          },
+        },
+        context,
+      ) => {
+        const foundUserDetails = await context.db.userDetails.findFirst({ where: { userId } });
+
+        if (foundUserDetails === null) {
+          return context.db.userDetails.create({
+            data: { firstName, lastName, userId },
+          });
+        } else {
+          return context.db.userDetails.update({
+            where: { id: foundUserDetails?.id },
+            data: {
+              firstName: firstName,
+              lastName: lastName,
+            },
+          });
+        }
+      },
+    });
   },
 });
 //Hello simon
