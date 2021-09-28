@@ -56,12 +56,6 @@ export const ItemQueries = extendType({
         return await ctx.db.item.findMany({ where: { User: { username } } });
       },
     });
-    // t.field("displayShopItems", {
-    //   type: nonNull(list(nonNull('Item'))),
-    //   resolve: async (source, args, ctx) => {
-    //     return await ctx.db.item.findMany({ where: { username: "dark_saber_dealer_69" } });
-    //   },
-    // });
   },
 });
 
