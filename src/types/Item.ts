@@ -11,6 +11,7 @@ export const item = objectType({
     t.field(Item.partDescription);
     t.field(Item.price);
     t.field(Item.userId);
+    t.field(Item.User)
   },
 });
 
@@ -50,11 +51,17 @@ export const ItemQueries = extendType({
     });
     t.field("displayItems", {
       type: nonNull(list(nonNull('Item'))),
-      args: { userId: nonNull(stringArg()) },
-      resolve: async (source, { userId }, ctx) => {
-        return await ctx.db.item.findMany({ where: { userId } });
+      args: { username: nonNull(stringArg()) },
+      resolve: async (source, { username }, ctx) => {
+        return await ctx.db.item.findMany({ where: { User: { username } } });
       },
     });
+    // t.field("displayShopItems", {
+    //   type: nonNull(list(nonNull('Item'))),
+    //   resolve: async (source, args, ctx) => {
+    //     return await ctx.db.item.findMany({ where: { username: "dark_saber_dealer_69" } });
+    //   },
+    // });
   },
 });
 
