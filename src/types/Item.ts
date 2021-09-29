@@ -1,3 +1,4 @@
+import { prisma, PrismaClient } from '.prisma/client';
 import { datatype, lorem, random } from 'faker';
 import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
 import { Item, PartName, SaberPart } from "nexus-prisma";
@@ -85,92 +86,103 @@ export const ItemMutations = extendType({
     }),
     t.field('itemBuy', {
       type: 'Item',
-      args: { 
-        userBuyerId: nonNull(stringArg()), 
-        itemId: nonNull(stringArg()) 
+      args: {
+        userBuyerId: nonNull(stringArg()),
+        itemId: nonNull(stringArg())
       },
       resolve: async (source, args, ctx) => {
-        const buyer = await ctx.db.user.findFirst({ where: { id: args.userBuyerId } })
-        const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" }})
-        const item = await ctx.db.item.findFirst({ where: { 
-          id: args.itemId,
-          userId: watto?.id
-        }})
-        
-        if(item === null)
-          throw new Error("Watto doesn't own this item")
-        
-        if (buyer?.money! - item?.price! < 0) {
-          throw new Error("Not enough money")
-        }
-        
-        await ctx.db.user.update({ 
-          where: { id: args.userBuyerId }, 
-          data: { 
-            money: { decrement: item?.price!}
+        const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" } })
+        const item = await ctx.db.item.findFirst({
+          where: {
+            id: args.itemId,
+            userId: watto?.id
           }
         })
 
-        await ctx.db.user.update({ 
-          where: { username: "dark_saber_dealer_69" },
-          data: { 
-            money: { increment: item?.price! }
-          }
-        })
-        
-        return await ctx.db.item.update({ 
-          where: { id: args.itemId }, 
-          data: {
-            User: {
-              connect: { id: args.userBuyerId }
+        if (item === null)
+          throw new Error("Watto doesn't own this item")
+
+        const result = await ctx.db.$transaction(async () => {
+          const buyer = await ctx.db.user.update({
+            where: { id: args.userBuyerId },
+            data: {
+              money: { decrement: item?.price! }
             }
-          } 
+          })
+
+          if (buyer?.money! < 0) {
+            throw new Error("User doesn't have enough money")
+          }
+
+          await ctx.db.user.update({
+            where: { username: "dark_saber_dealer_69" },
+            data: {
+              money: { increment: item?.price! }
+            }
+          })
+
+          return await ctx.db.item.update({
+            where: { id: args.itemId },
+            data: {
+              User: {
+                connect: { id: args.userBuyerId }
+              }
+            }
+          })
         })
+
+        return result ?? null
       }
     }),
     t.field('itemSell', {
       type: 'Item',
-      args: { 
-        userSellerId: nonNull(stringArg()), 
-        itemId: nonNull(stringArg()) 
+      args: {
+        userSellerId: nonNull(stringArg()),
+        itemId: nonNull(stringArg())
       },
       resolve: async (source, args, ctx) => {
         const seller = await ctx.db.user.findFirst({ where: { id: args.userSellerId } })
-        const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" }})
-        const item = await ctx.db.item.findFirst({ where: { 
-          id: args.itemId,
-          userId: seller?.id
-        }})
-        
-        if(item === null)
-          throw new Error("User doesn't own this item")
-        
-        if (watto?.money! - item?.price! < 0) {
-          throw new Error("Watto doesn't enough money")
-        }
-        
-        await ctx.db.user.update({ 
-          where: { id: args.userSellerId }, 
-          data: { 
-            money: { increment: item?.price!}
+        const item = await ctx.db.item.findFirst({
+          where: {
+            id: args.itemId,
+            userId: seller?.id
           }
         })
 
-        await ctx.db.user.update({ 
-          where: { username: "dark_saber_dealer_69" },
-          data: { 
-            money: { decrement: item?.price! }
-          }
-        })
-        
-        return await ctx.db.item.update({ 
-          where: { id: args.itemId }, 
-          data: {
-            User: {
-              connect: { id: watto?.id }
+        if (item === null) {
+          throw new Error("User doesn't own this item")
+        }
+
+        const result = await ctx.db.$transaction(async () => {
+          const watto = await ctx.db.user.update({
+            where: { username: "dark_saber_dealer_69" },
+            data: {
+              money: { decrement: item?.price! }
             }
-          } 
+          })
+
+          if (watto?.money! < 0) {
+            throw new Error("Watto doesn't have enough money")
+          }
+
+          await ctx.db.user.update({
+            where: { id: args.userSellerId },
+            data: {
+              money: { increment: item?.price! }
+            }
+          })
+
+          return await ctx.db.item.update({
+            where: { id: args.itemId },
+            data: {
+              User: {
+                connect: { id: watto?.id }
+              }
+            }
+          })
         })
+
+        return result ?? null
       }
     })
   },

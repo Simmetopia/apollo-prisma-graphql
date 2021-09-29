@@ -5,6 +5,7 @@ datasource db {
 
 generator prisma_client_js {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 generator nexusPrisma {
