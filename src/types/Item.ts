@@ -92,6 +92,7 @@ export const ItemMutations = extendType({
       },
       resolve: async (source, args, ctx) => {
         const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" } })
+        let buyer = await ctx.db.user.findFirst({ where: { id: args.userBuyerId } })
         const item = await ctx.db.item.findFirst({
           where: {
             id: args.itemId,
@@ -99,20 +100,21 @@ export const ItemMutations = extendType({
           }
         })
 
-        if (item === null)
+        if (item === null) {
           throw new Error("Watto doesn't own this item")
+        }
+          
+        if (buyer?.money! - item?.price! < 0) {
+          throw new Error("Not enough money")
+        }
 
         const result = await ctx.db.$transaction(async () => {
-          const buyer = await ctx.db.user.update({
+          await ctx.db.user.update({
             where: { id: args.userBuyerId },
             data: {
               money: { decrement: item?.price! }
             }
           })
-
-          if (buyer?.money! < 0) {
-            throw new Error("User doesn't have enough money")
-          }
 
           await ctx.db.user.update({
             where: { username: "dark_saber_dealer_69" },
@@ -141,6 +143,7 @@ export const ItemMutations = extendType({
         itemId: nonNull(stringArg())
       },
       resolve: async (source, args, ctx) => {
+        let watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" } })
         const seller = await ctx.db.user.findFirst({ where: { id: args.userSellerId } })
         const item = await ctx.db.item.findFirst({
           where: {
@@ -153,17 +156,17 @@ export const ItemMutations = extendType({
           throw new Error("User doesn't own this item")
         }
 
+        if (watto?.money! - item?.price! < 0) {
+          throw new Error("Watto doesn't enough money")
+        }
+
         const result = await ctx.db.$transaction(async () => {
-          const watto = await ctx.db.user.update({
+          await ctx.db.user.update({
             where: { username: "dark_saber_dealer_69" },
             data: {
               money: { decrement: item?.price! }
             }
           })
-
-          if (watto?.money! < 0) {
-            throw new Error("Watto doesn't have enough money")
-          }
 
           await ctx.db.user.update({
             where: { id: args.userSellerId },
