@@ -96,7 +96,9 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     _deprecated_field: string | null; // String
+    itemBuy: NexusGenRootTypes['Item'] | null; // Item
     itemCreate: NexusGenRootTypes['Item'] | null; // Item
+    itemSell: NexusGenRootTypes['Item'] | null; // Item
     userCreate: NexusGenRootTypes['User'] | null; // User
     userLogin: NexusGenRootTypes['User'] | null; // User
   }
@@ -142,7 +144,9 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     _deprecated_field: 'String'
+    itemBuy: 'Item'
     itemCreate: 'Item'
+    itemSell: 'Item'
     userCreate: 'User'
     userLogin: 'User'
   }
@@ -178,8 +182,16 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    itemBuy: { // args
+      itemId: string; // String!
+      userBuyerId: string; // String!
+    }
     itemCreate: { // args
       userId: string; // String!
+    }
+    itemSell: { // args
+      itemId: string; // String!
+      userSellerId: string; // String!
     }
     userCreate: { // args
       username: string; // String!
