@@ -81,6 +81,15 @@ export const setSellPriceInputArgs = inputObjectType({
   },
 });
 
+function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  if (min === 0) {
+    return Math.round(Math.floor(Math.random() * (125 - 10) + min));
+  }
+  return Math.round(Math.floor(Math.random() * (max - min) + min));
+}
+
 export const ItemMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
@@ -89,13 +98,28 @@ export const ItemMutations = extendType({
       resolve: async (source, args, context) => {
         var saberPartString = saberParts[Math.floor(Math.random() * saberParts.length)];
         var saberNameString = partNames[Math.floor(Math.random() * partNames.length)];
+        var partDescriptionsString;
+        var price;
+
+        for (let i = 0; i < 5; i++) {
+          if (Math.floor(Math.random() * 2) < 1) {
+            partDescriptionsString = partDescriptions[i];
+            price = getRandomInt(125 * i, 175 * i);
+            break;
+          }
+          if (i === 4) {
+            partDescriptionsString = partDescriptions[4];
+            price = getRandomInt(125 * i, 175 * i);
+          }
+        }
+
         if (saberPartString === 'Blade') {
           return await context.db.item.create({
             data: {
               saberPart: saberPartString,
-              price: Math.round(Math.random() * (1000 - 1) + 1),
+              price: price,
               partName: saberNameString,
-              partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
+              partDescription: partDescriptionsString,
               inShop: true,
               url: 'http://www.saberparts.com/Media/' + saberPartString + '.png?media=sm',
             },
@@ -104,9 +128,9 @@ export const ItemMutations = extendType({
           return await context.db.item.create({
             data: {
               saberPart: saberPartString,
-              price: Math.round(Math.random() * (1000 - 1) + 1),
+              price: price,
               partName: saberNameString,
-              partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
+              partDescription: partDescriptionsString,
               inShop: true,
               url: 'http://www.saberparts.com/Media/' + saberNameString + '%20' + saberPartString + '.png?media=sm',
             },
