@@ -22,6 +22,7 @@ export const item = objectType({
     t.field(Item.userId);
     t.field(Item.User);
     t.field(Item.inShop);
+    t.field(Item.url);
   },
 });
 
@@ -52,7 +53,7 @@ export const ItemQueries = extendType({
   },
 });
 
-var saberParts: string[] = ['Emitter', 'Switch', 'Bodies', 'Pommels', 'Blade'];
+var saberParts: string[] = ['Emitter', 'Switch', 'Body', 'Pommel', 'Blade'];
 var partNames: string[] = ['Commando', 'Outcast', 'Pathfinder'];
 var partDescriptions: string[] = [
   'This is a common item',
@@ -86,15 +87,31 @@ export const ItemMutations = extendType({
     t.field('ItemCreate', {
       type: 'Item',
       resolve: async (source, args, context) => {
-        return await context.db.item.create({
-          data: {
-            saberPart: saberParts[Math.floor(Math.random() * saberParts.length)],
-            price: Math.round(Math.random() * (1000 - 1) + 1),
-            partName: partNames[Math.floor(Math.random() * partNames.length)],
-            partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
-            inShop: true,
-          },
-        });
+        var saberPartString = saberParts[Math.floor(Math.random() * saberParts.length)];
+        var saberNameString = partNames[Math.floor(Math.random() * partNames.length)];
+        if (saberPartString === 'Blade') {
+          return await context.db.item.create({
+            data: {
+              saberPart: saberPartString,
+              price: Math.round(Math.random() * (1000 - 1) + 1),
+              partName: saberNameString,
+              partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
+              inShop: true,
+              url: 'http://www.saberparts.com/Media/' + saberPartString + '.png?media=sm',
+            },
+          });
+        } else {
+          return await context.db.item.create({
+            data: {
+              saberPart: saberPartString,
+              price: Math.round(Math.random() * (1000 - 1) + 1),
+              partName: saberNameString,
+              partDescription: partDescriptions[Math.floor(Math.random() * partDescriptions.length)],
+              inShop: true,
+              url: 'http://www.saberparts.com/Media/' + saberNameString + '%20' + saberPartString + '.png?media=sm',
+            },
+          });
+        }
       },
     });
     t.field('DeleteItemsNotOwned', {

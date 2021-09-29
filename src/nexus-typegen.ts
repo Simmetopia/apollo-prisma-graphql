@@ -83,6 +83,7 @@ export interface NexusGenObjects {
     partName?: string | null; // String
     price?: number | null; // Int
     saberPart?: string | null; // String
+    url?: string | null; // String
     userId?: string | null; // String
   }
   Mutation: {};
@@ -121,6 +122,7 @@ export interface NexusGenFieldTypes {
     partName: string | null; // String
     price: number | null; // Int
     saberPart: string | null; // String
+    url: string | null; // String
     userId: string | null; // String
   }
   Mutation: { // field return type
@@ -171,6 +173,7 @@ export interface NexusGenFieldTypeNames {
     partName: 'String'
     price: 'Int'
     saberPart: 'String'
+    url: 'String'
     userId: 'String'
   }
   Mutation: { // field return type name
