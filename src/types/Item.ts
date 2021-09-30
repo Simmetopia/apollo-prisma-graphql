@@ -7,7 +7,7 @@ export const item = objectType({
   name: Item.$name,
   definition(t) {
     t.field(Item.id);
-    t.field(Item.SaberPart);
+    t.field(Item.SaberPart); //filtering
     t.field(Item.PartName);
     t.field(Item.partDescription);
     t.field(Item.price);
@@ -57,6 +57,16 @@ export const ItemQueries = extendType({
         return await ctx.db.item.findMany({ where: { User: { username } } });
       },
     });
+    t.field("filterItems", {
+      type: nonNull(list(nonNull('Item'))),
+      args: { saberPart: nonNull(stringArg()) },
+      resolve: async (source, { saberPart }, ctx) => {
+        if (saberPart == "") {
+          return await ctx.db.item.findMany({ where: { User: { username: "dark_saber_dealer_69" } } })
+        }
+        return await ctx.db.item.findMany({ where: { SaberPart: { name: saberPart }, User: { username: "dark_saber_dealer_69" } } })
+      }
+    })
   },
 });
 

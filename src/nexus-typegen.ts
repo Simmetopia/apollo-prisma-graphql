@@ -109,6 +109,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     _deprecated_field: string | null; // String
     displayItems: NexusGenRootTypes['Item'][]; // [Item!]!
+    filterItems: NexusGenRootTypes['Item'][]; // [Item!]!
     items: NexusGenRootTypes['Item'][]; // [Item!]!
     myq: string | null; // String
     userDetails: NexusGenRootTypes['User'] | null; // User
@@ -157,6 +158,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     _deprecated_field: 'String'
     displayItems: 'Item'
+    filterItems: 'Item'
     items: 'Item'
     myq: 'String'
     userDetails: 'User'
@@ -203,6 +205,9 @@ export interface NexusGenArgTypes {
   Query: {
     displayItems: { // args
       username: string; // String!
+    }
+    filterItems: { // args
+      saberPart: string; // String!
     }
     userDetails: { // args
       userId: string; // String!
