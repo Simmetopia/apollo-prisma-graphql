@@ -18,6 +18,12 @@ export interface NexusGenInputs {
     itemId: string; // ID!
     userId: string; // ID!
   }
+  FilterItemArgs: { // input type
+    filterValue: string; // String!
+  }
+  FilterItemPriceArgs: { // input type
+    filterPrice: number; // Int!
+  }
   GetUserByUsernameInputArgs: { // input type
     username: string; // String!
   }
@@ -130,13 +136,15 @@ export interface NexusGenFieldTypes {
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
     buyItem: NexusGenRootTypes['User'] | null; // User
-    updateOrCreateUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     setSellPrice: NexusGenRootTypes['Item'] | null; // Item
+    updateOrCreateUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
   }
   Query: { // field return type
+    FilterItemsByPrice: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
+    FilteringItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllItemsInShop: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllUserDetails: Array<NexusGenRootTypes['UserDetails'] | null> | null; // [UserDetails]
@@ -181,13 +189,15 @@ export interface NexusGenFieldTypeNames {
     ItemCreate: 'Item'
     _deprecated_field: 'String'
     buyItem: 'User'
-    updateOrCreateUserDetails: 'UserDetails'
     setSellPrice: 'Item'
+    updateOrCreateUserDetails: 'UserDetails'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
     userDetailsUpdate: 'UserDetails'
   }
   Query: { // field return type name
+    FilterItemsByPrice: 'Item'
+    FilteringItems: 'Item'
     GetAllItems: 'Item'
     GetAllItemsInShop: 'Item'
     GetAllUserDetails: 'UserDetails'
@@ -217,11 +227,11 @@ export interface NexusGenArgTypes {
     buyItem: { // args
       input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
     }
-    updateOrCreateUserDetails: { // args
-      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
-    }
     setSellPrice: { // args
       input: NexusGenInputs['setSellPriceInputArgs']; // setSellPriceInputArgs!
+    }
+    updateOrCreateUserDetails: { // args
+      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
     }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
@@ -234,6 +244,12 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    FilterItemsByPrice: { // args
+      input: NexusGenInputs['FilterItemPriceArgs']; // FilterItemPriceArgs!
+    }
+    FilteringItems: { // args
+      input: NexusGenInputs['FilterItemArgs']; // FilterItemArgs!
+    }
     GetUser: { // args
       input: NexusGenInputs['GetUserInputArgs']; // GetUserInputArgs!
     }

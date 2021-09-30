@@ -35,6 +35,20 @@ export const ItemArgs = inputObjectType({
   },
 });
 
+export const FilterItemArgs = inputObjectType({
+  name: 'FilterItemArgs',
+  definition: (t) => {
+    t.nonNull.string('filterValue');
+  },
+});
+
+export const FilterItemPriceArgs = inputObjectType({
+  name: 'FilterItemPriceArgs',
+  definition: (t) => {
+    t.nonNull.int('filterPrice');
+  },
+});
+
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
@@ -48,6 +62,28 @@ export const ItemQueries = extendType({
       type: list('Item'),
       resolve: async (Source, args, context) => {
         return await context.db.item.findMany({ where: { inShop: true } });
+      },
+    });
+    t.field('FilteringItems', {
+      type: list('Item'),
+      args: {
+        input: arg({
+          type: nonNull(FilterItemArgs),
+        }),
+      },
+      resolve: async (Source, { input: { filterValue } }, context) => {
+        return await context.db.item.findMany({ where: { partName: { equals: filterValue } } });
+      },
+    });
+    t.field('FilterItemsByPrice', {
+      type: list('Item'),
+      args: {
+        input: arg({
+          type: nonNull(FilterItemPriceArgs),
+        }),
+      },
+      resolve: async (Source, { input: { filterPrice } }, context) => {
+        return await context.db.item.findMany({ where: { price: { gte: filterPrice } } });
       },
     });
   },
