@@ -48,7 +48,7 @@ export interface NexusGenObjects {
   Item: { // root type
     id: string; // ID!
     partDescription?: string | null; // String
-    price?: number | null; // Float
+    price?: number | null; // Int
     userId?: string | null; // String
   }
   Mutation: {};
@@ -91,7 +91,7 @@ export interface NexusGenFieldTypes {
     User: NexusGenRootTypes['User'] | null; // User
     id: string; // ID!
     partDescription: string | null; // String
-    price: number | null; // Float
+    price: number | null; // Int
     userId: string | null; // String
   }
   Mutation: { // field return type
@@ -99,6 +99,7 @@ export interface NexusGenFieldTypes {
     itemBuy: NexusGenRootTypes['Item'] | null; // Item
     itemCreate: NexusGenRootTypes['Item'] | null; // Item
     itemSell: NexusGenRootTypes['Item'] | null; // Item
+    itemUpdatePrice: NexusGenRootTypes['Item'][]; // [Item!]!
     userCreate: NexusGenRootTypes['User'] | null; // User
     userLogin: NexusGenRootTypes['User'] | null; // User
   }
@@ -140,7 +141,7 @@ export interface NexusGenFieldTypeNames {
     User: 'User'
     id: 'ID'
     partDescription: 'String'
-    price: 'Float'
+    price: 'Int'
     userId: 'String'
   }
   Mutation: { // field return type name
@@ -148,6 +149,7 @@ export interface NexusGenFieldTypeNames {
     itemBuy: 'Item'
     itemCreate: 'Item'
     itemSell: 'Item'
+    itemUpdatePrice: 'Item'
     userCreate: 'User'
     userLogin: 'User'
   }

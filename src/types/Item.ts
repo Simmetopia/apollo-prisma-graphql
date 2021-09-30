@@ -1,4 +1,3 @@
-import { prisma, PrismaClient } from '.prisma/client';
 import { datatype, lorem, random } from 'faker';
 import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
 import { Item, PartName, SaberPart } from "nexus-prisma";
@@ -196,6 +195,25 @@ export const ItemMutations = extendType({
         })
 
         return result ?? null
+      }
+    }),
+    t.field('itemUpdatePrice', 
+    {
+      type: nonNull(list(nonNull('Item'))),
+      resolve: async (source, args, ctx) =>
+      {
+        const items = await ctx.db.item.findMany();
+
+        items.map(async item => {
+          const change = Math.round(datatype.float({ min: 0.85, max: 1.19 }) * item.price!);
+
+          await ctx.db.item.update({
+            where: { id: item.id }, 
+            data: { price: change }
+          })
+        })
+
+        return await ctx.db.item.findMany();
       }
     })
   },
