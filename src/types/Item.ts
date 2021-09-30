@@ -83,7 +83,9 @@ export const ItemQueries = extendType({
         }),
       },
       resolve: async (Source, { input: { filterPrice } }, context) => {
-        return await context.db.item.findMany({ where: { price: { gte: filterPrice } } });
+        return await context.db.item.findMany({
+          where: { AND: [{ price: { gte: filterPrice } }, { inShop: { equals: true } }] },
+        });
       },
     });
   },
