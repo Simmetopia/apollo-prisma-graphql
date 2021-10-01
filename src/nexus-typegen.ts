@@ -94,6 +94,9 @@ export interface NexusGenObjects {
   }
   Mutation: {};
   Query: {};
+  Resault: { // root type
+    price: number; // Int!
+  }
   User: { // root type
     id: string; // ID!
     money: number; // Int!
@@ -152,7 +155,11 @@ export interface NexusGenFieldTypes {
     GetUserByUsername: NexusGenRootTypes['User'] | null; // User
     GetUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     GetUsersList: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    MostExpensiveItemPrice: NexusGenRootTypes['Resault'] | null; // Resault
     _deprecated_field: string | null; // String
+  }
+  Resault: { // field return type
+    price: number; // Int!
   }
   User: { // field return type
     details: NexusGenRootTypes['UserDetails'] | null; // UserDetails
@@ -205,7 +212,11 @@ export interface NexusGenFieldTypeNames {
     GetUserByUsername: 'User'
     GetUserDetails: 'UserDetails'
     GetUsersList: 'User'
+    MostExpensiveItemPrice: 'Resault'
     _deprecated_field: 'String'
+  }
+  Resault: { // field return type name
+    price: 'Int'
   }
   User: { // field return type name
     details: 'UserDetails'

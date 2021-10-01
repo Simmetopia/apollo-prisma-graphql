@@ -84,8 +84,21 @@ export const ItemQueries = extendType({
       },
       resolve: async (Source, { input: { filterPrice } }, context) => {
         return await context.db.item.findMany({
-          where: { AND: [{ NOT: { price: { gte: filterPrice } } }, { inShop: { equals: true } }] },
+          where: { AND: [{ NOT: { price: { gte: filterPrice + 1 } } }, { inShop: { equals: true } }] },
         });
+      },
+    });
+    t.field('MostExpensiveItemPrice', {
+      type: objectType({
+        name: 'Resault',
+        definition(t) {
+          t.nonNull.int('price');
+        },
+      }),
+      resolve: async (Source, args, context) => {
+        const price = await context.db.item.aggregate({ _max: { price: true } });
+        const maxPrice = price._max.price ?? 0;
+        return { price: maxPrice };
       },
     });
   },
