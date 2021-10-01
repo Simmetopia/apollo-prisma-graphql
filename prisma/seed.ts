@@ -41,6 +41,14 @@ const createItems = async (amountOfItems: number) => {
 };
 
 async function main() {
+  
+  await client.user.create({
+    data: {
+      username: "soup",
+      details: { create: { firstName: 'Soup', lastName: 'Soap' } },
+      money: 69420,
+    },
+  })
 
   await client.$connect();
   const saberPartPromises = createSaberParts().map(saberPart => {
@@ -53,7 +61,7 @@ async function main() {
   await Promise.all(saberPartPromises);
 
   const partNamePromisesInSecondDegree = createPartName().map(async partSet => {
-   const partNames = await Promise.all(partSet.partList.map(async partName => {
+    const partNames = await Promise.all(partSet.partList.map(async partName => {
       const saberPart = await client.saberPart.findFirst({where: {name: partSet.saberPart}})
 
       return client.partName.create({

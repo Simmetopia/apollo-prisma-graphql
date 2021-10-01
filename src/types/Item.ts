@@ -1,4 +1,3 @@
-import { prisma, PrismaClient } from '.prisma/client';
 import { datatype, lorem, random } from 'faker';
 import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
 import { Item, PartName, SaberPart } from "nexus-prisma";
@@ -75,13 +74,13 @@ export const ItemMutations = extendType({
   definition(t) {
     t.field('itemCreate', {
       type: 'Item',
-      args: { userId: nonNull(stringArg()) },
-      resolve: async (source, { userId }, ctx) => {
+      resolve: async (source, args, ctx) => {
 
         const saberParts = await ctx.db.saberPart.findMany();
         const saberPart = random.arrayElement(saberParts);
 
         const partNames = await ctx.db.partName.findMany({ where: { saberPartId: saberPart.id } });
+        const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69"} })
 
         return await ctx.db.item.create({
           data: {
@@ -89,7 +88,7 @@ export const ItemMutations = extendType({
             partNameId: random.arrayElement(partNames).id,
             partDescription: lorem.paragraph(),
             price: datatype.number(300),
-            userId
+            userId: watto?.id
           }
         });
       }
@@ -196,6 +195,25 @@ export const ItemMutations = extendType({
         })
 
         return result ?? null
+      }
+    }),
+    t.field('itemUpdatePrice', 
+    {
+      type: nonNull(list(nonNull('Item'))),
+      resolve: async (source, args, ctx) =>
+      {
+        const items = await ctx.db.item.findMany();
+
+        items.map(async item => {
+          const change = Math.round(datatype.float({ min: 0.85, max: 1.19 }) * item.price!);
+
+          await ctx.db.item.update({
+            where: { id: item.id }, 
+            data: { price: change }
+          })
+        })
+
+        return await ctx.db.item.findMany();
       }
     })
   },

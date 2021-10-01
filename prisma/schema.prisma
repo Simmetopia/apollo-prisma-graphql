@@ -36,7 +36,7 @@ model Item {
   partNameId      String?
   PartName        PartName?  @relation(fields: [partNameId], references: [id])
   partDescription String?
-  price           Float?
+  price           Int?     
   User            User?      @relation(fields: [userId], references: [id])
   userId          String?
 }
