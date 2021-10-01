@@ -190,9 +190,6 @@ export interface NexusGenArgTypes {
       itemId: string; // String!
       userBuyerId: string; // String!
     }
-    itemCreate: { // args
-      userId: string; // String!
-    }
     itemSell: { // args
       itemId: string; // String!
       userSellerId: string; // String!

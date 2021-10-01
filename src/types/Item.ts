@@ -74,13 +74,13 @@ export const ItemMutations = extendType({
   definition(t) {
     t.field('itemCreate', {
       type: 'Item',
-      args: { userId: nonNull(stringArg()) },
-      resolve: async (source, { userId }, ctx) => {
+      resolve: async (source, args, ctx) => {
 
         const saberParts = await ctx.db.saberPart.findMany();
         const saberPart = random.arrayElement(saberParts);
 
         const partNames = await ctx.db.partName.findMany({ where: { saberPartId: saberPart.id } });
+        const watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69"} })
 
         return await ctx.db.item.create({
           data: {
@@ -88,7 +88,7 @@ export const ItemMutations = extendType({
             partNameId: random.arrayElement(partNames).id,
             partDescription: lorem.paragraph(),
             price: datatype.number(300),
-            userId
+            userId: watto?.id
           }
         });
       }
