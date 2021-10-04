@@ -328,6 +328,7 @@ export const ItemMutations = extendType({
               saberPart: 'Light Saber',
               userId: items[0].userId,
               url: 'https://i.ibb.co/WBWsQrT/icons8-lightsaber-480.png',
+              inShop: false,
               partDescription: 'Im passivly generating money',
             },
           });
