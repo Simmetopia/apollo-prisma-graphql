@@ -51,6 +51,9 @@ export interface NexusGenInputs {
     id?: string | null; // ID
     lastName?: string | null; // String
   }
+  combineItemsInputArgsItem: { // input type
+    ItemsId?: Array<string | null> | null; // [ID]
+  }
   setSellPriceInputArgs: { // input type
     Item: NexusGenInputs['setSellPriceInputArgsItem']; // setSellPriceInputArgsItem!
   }
@@ -130,8 +133,9 @@ export interface NexusGenFieldTypes {
     ItemCreate: NexusGenRootTypes['Item'] | null; // Item
     _deprecated_field: string | null; // String
     buyItem: NexusGenRootTypes['User'] | null; // User
-    updateOrCreateUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
+    combineItems: NexusGenRootTypes['Item'] | null; // Item
     setSellPrice: NexusGenRootTypes['Item'] | null; // Item
+    updateOrCreateUserDetails: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userCreate: NexusGenRootTypes['User'] | null; // User
     userDetailsCreate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
@@ -181,8 +185,9 @@ export interface NexusGenFieldTypeNames {
     ItemCreate: 'Item'
     _deprecated_field: 'String'
     buyItem: 'User'
-    updateOrCreateUserDetails: 'UserDetails'
+    combineItems: 'Item'
     setSellPrice: 'Item'
+    updateOrCreateUserDetails: 'UserDetails'
     userCreate: 'User'
     userDetailsCreate: 'UserDetails'
     userDetailsUpdate: 'UserDetails'
@@ -217,11 +222,14 @@ export interface NexusGenArgTypes {
     buyItem: { // args
       input: NexusGenInputs['BuyItemArgs']; // BuyItemArgs!
     }
-    updateOrCreateUserDetails: { // args
-      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
+    combineItems: { // args
+      input: NexusGenInputs['combineItemsInputArgsItem']; // combineItemsInputArgsItem!
     }
     setSellPrice: { // args
       input: NexusGenInputs['setSellPriceInputArgs']; // setSellPriceInputArgs!
+    }
+    updateOrCreateUserDetails: { // args
+      input: NexusGenInputs['UserDetailsInputArgs']; // UserDetailsInputArgs!
     }
     userCreate: { // args
       input: NexusGenInputs['UserCreateInputArgs']; // UserCreateInputArgs!
