@@ -38,4 +38,5 @@ model Item {
   url             String?
   User            User?   @relation(fields: [userId], references: [id])
   userId          String?
+  rarity          String?
 }
