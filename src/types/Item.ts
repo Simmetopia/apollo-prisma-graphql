@@ -228,38 +228,38 @@ export const ItemMutations = extendType({
           }
           var emitterCount = 0;
           var switchCount = 0;
-          var bobyCount = 0;
+          var bodyCount = 0;
           var pommelCount = 0;
           var bladeCount = 0;
           for (let i = 0; i < items.length; i++) {
             if (items[i].saberPart === saberParts[0]) {
               emitterCount++;
               if (emitterCount >= 2) {
-                throw new Error('You need to choise one of each part');
+                throw new Error('You need to choose one of each part');
               }
             }
             if (items[i].saberPart === saberParts[1]) {
               switchCount++;
               if (switchCount >= 2) {
-                throw new Error('You need to choise one of each part');
+                throw new Error('You need to choose one of each part');
               }
             }
             if (items[i].saberPart === saberParts[2]) {
-              bobyCount++;
-              if (bobyCount >= 2) {
-                throw new Error('You need to choise one of each part');
+              bodyCount++;
+              if (bodyCount >= 2) {
+                throw new Error('You need to choose one of each part');
               }
             }
             if (items[i].saberPart === saberParts[3]) {
               pommelCount++;
               if (pommelCount >= 2) {
-                throw new Error('You need to choise one of each part');
+                throw new Error('You need to choose one of each part');
               }
             }
             if (items[i].saberPart === saberParts[4]) {
               bladeCount++;
               if (bladeCount >= 2) {
-                throw new Error('You need to choise one of each part');
+                throw new Error('You need to choose one of each part');
               }
             }
           }
