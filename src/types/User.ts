@@ -10,6 +10,7 @@ export const user = objectType({
     t.field(User.username);
     t.field(User.inventory);
     t.field(User.money);
+    t.field(User.cart);
   },
 });
 
