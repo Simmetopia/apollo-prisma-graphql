@@ -12,6 +12,7 @@ export const item = objectType({
     t.field(Item.price);
     t.field(Item.userId);
     t.field(Item.User)
+    t.field(Item.carts)
   },
 });
 
@@ -197,11 +198,9 @@ export const ItemMutations = extendType({
         return result ?? null
       }
     }),
-    t.field('itemUpdatePrice', 
-    {
+    t.field('itemUpdatePrice', {
       type: nonNull(list(nonNull('Item'))),
-      resolve: async (source, args, ctx) =>
-      {
+      resolve: async (source, args, ctx) => {
         const items = await ctx.db.item.findMany();
 
         items.map(async item => {
@@ -215,6 +214,117 @@ export const ItemMutations = extendType({
 
         return await ctx.db.item.findMany();
       }
+    }),
+    t.field('addToCart', {
+      type: nonNull('Item'),
+      args: {
+        userId: nonNull(stringArg()),
+        itemId: nonNull(stringArg())
+      },
+      resolve: async (source, args, ctx) => {
+
+        return await ctx.db.user.update({
+          where: { id: args.userId },
+          data: {
+            cart: {
+              connect: {
+                id: args.itemId
+              }
+            }
+          }
+        })
+      }
+    }),
+    t.field('removeFromCart', {
+      type: nonNull('Item'),
+      args: {
+        userId: nonNull(stringArg()),
+        itemId: nonNull(stringArg())
+      },
+      resolve: async (source, args, ctx) => {
+
+        return await ctx.db.user.update({
+          where: { id: args.userId },
+          data: {
+            cart: {
+              disconnect: {
+                id: args.itemId
+              }
+            }
+          }
+        })
+      }
+    }),
+    t.field('buyCart', {
+      type: nonNull(list(nonNull('Item'))),
+      args: {
+        userId: nonNull(stringArg())
+      },
+      resolve: async (source, {userId}, ctx) => {
+        let watto = await ctx.db.user.findFirst({ where: { username: "dark_saber_dealer_69" } })
+        const buyer = await ctx.db.user.findFirst({ 
+          where: { id: userId }, 
+          include: { cart: { include: { PartName: true } } } 
+        })
+
+        const totalPrice = getPriceAndCheckOwner(buyer!, watto!.id)
+          
+        if (buyer?.money! - totalPrice < 0) {
+          throw new Error("Not enough money")
+        }
+
+        const result = await ctx.db.$transaction(async () => {
+          await ctx.db.user.update({
+            where: { username: "dark_saber_dealer_69" },
+            data: {
+              money: { increment: totalPrice }
+            }
+          })
+
+          await ctx.db.user.update({
+            where: { id: userId },
+            data: {
+              money: { decrement: totalPrice }
+            }
+          })
+
+          buyer?.cart.forEach(async item => {
+            await ctx.db.item.update({
+              where: { id: item.id },
+              data: {
+                User: {
+                  connect: { id: userId }
+                },
+                carts: {
+                  disconnect: { id: userId }
+                }
+              }
+            })
+          })
+
+          return await ctx.db.item.findMany({ where: {id: userId}})
+        })
+
+        return result ?? null
+      }
     })
   },
 });
+
+function getPriceAndCheckOwner(buyer: import(".prisma/client").User & { cart: (import(".prisma/client").Item & { PartName: import(".prisma/client").PartName | null; })[]; }, wattoId: string) {
+  let price = 0
+  let unownedItems: string[] = []
+
+  buyer.cart.forEach(item => {
+    price += item.price!
+
+    if (item.userId != wattoId) {
+      unownedItems.push(item.PartName?.name!)
+    }
+  });
+
+  if (unownedItems.length == 0)
+    throw new Error("Watto doesn't own these items" + unownedItems)
+
+  return price
+}
