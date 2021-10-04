@@ -90,7 +90,7 @@ export const ItemQueries = extendType({
     });
     t.field('MostExpensiveItemPrice', {
       type: objectType({
-        name: 'Resault',
+        name: 'Result',
         definition(t) {
           t.nonNull.int('price');
         },
