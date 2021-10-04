@@ -281,12 +281,12 @@ export const ItemMutations = extendType({
         } else {
           for (let i = 0; i < items.length; i++) {
             if (items[i].partName !== items[0].partName) {
-              throw new Error('You need to choise ' + saberParts.length + ' items of same name');
+              throw new Error('You need to choose ' + saberParts.length + ' items of same name');
             }
           }
           for (let i = 0; i < items.length; i++) {
             if (items[i].rarity !== items[0].rarity) {
-              throw new Error('You need to choise items of same rarity');
+              throw new Error('You need to choose items of same rarity');
             }
           }
           var emitterCount = 0;
