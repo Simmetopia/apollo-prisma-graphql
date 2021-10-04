@@ -1,7 +1,9 @@
 import { company, lorem, random } from 'faker';
 import { Source } from 'graphql';
 import { objectType, inputObjectType, idArg, arg, extendType, nonNull, list, stringArg } from 'nexus';
-import { Item } from 'nexus-prisma';
+import { Item, User } from 'nexus-prisma';
+import { AuthenticationError } from 'apollo-server-errors';
+import { Item as Item2, User as User2 } from '.prisma/client';
 
 export const item = objectType({
   name: Item.$name,
@@ -229,6 +231,117 @@ export const ItemMutations = extendType({
           },
         });
       },
+    });
+    t.field('combineItems', {
+      type: 'Item',
+      args: {
+        input: nonNull(
+          arg({
+            type: combineItemsInputArgs,
+          }),
+        ),
+      },
+      resolve: async (source, { input }, context) => {
+        if (!input.ItemsId) {
+          throw new Error('Error');
+        }
+
+        var items: Item2[] = [];
+
+        await Promise.all(
+          input.ItemsId.map(async (element) => {
+            if (!element) {
+              throw new Error('Error: ');
+              return;
+            }
+            var item = await context.db.item.findFirst({
+              where: { id: element },
+              include: { User: true },
+            });
+
+            if (!item) {
+              return;
+            }
+
+            items.push(item);
+          }),
+        );
+
+        if (items.length === 0) {
+          throw new Error('Please select items to combine');
+        } else if (items.length > saberParts.length || items.length < saberParts.length) {
+          throw new Error('You can only combine ' + saberParts.length + ' items');
+        } else {
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].partName !== items[0].partName) {
+              throw new Error('You need to choise ' + saberParts.length + ' items of same name');
+            }
+          }
+          var emitterCount = 0;
+          var switchCount = 0;
+          var bodyCount = 0;
+          var pommelCount = 0;
+          var bladeCount = 0;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].saberPart === saberParts[0]) {
+              emitterCount++;
+              if (emitterCount >= 2) {
+                throw new Error('You need to choose one of each part');
+              }
+            }
+            if (items[i].saberPart === saberParts[1]) {
+              switchCount++;
+              if (switchCount >= 2) {
+                throw new Error('You need to choose one of each part');
+              }
+            }
+            if (items[i].saberPart === saberParts[2]) {
+              bodyCount++;
+              if (bodyCount >= 2) {
+                throw new Error('You need to choose one of each part');
+              }
+            }
+            if (items[i].saberPart === saberParts[3]) {
+              pommelCount++;
+              if (pommelCount >= 2) {
+                throw new Error('You need to choose one of each part');
+              }
+            }
+            if (items[i].saberPart === saberParts[4]) {
+              bladeCount++;
+              if (bladeCount >= 2) {
+                throw new Error('You need to choose one of each part');
+              }
+            }
+          }
+          for (let i = 0; i < items.length; i++) {
+            await context.db.item.delete({
+              where: {
+                id: items[i].id,
+              },
+            });
+          }
+
+          return await context.db.item.create({
+            data: {
+              partName: items[0].partName,
+              saberPart: 'Light Saber',
+              userId: items[0].userId,
+              url: 'https://i.ibb.co/WBWsQrT/icons8-lightsaber-480.png',
+              partDescription: 'Im passivly generating money',
+            },
+          });
+        }
+      },
+    });
+  },
+});
+
+export const combineItemsInputArgs = inputObjectType({
+  name: 'combineItemsInputArgsItem',
+  definition(t) {
+    t.field('ItemsId', {
+      type: list('ID'),
     });
   },
 });
