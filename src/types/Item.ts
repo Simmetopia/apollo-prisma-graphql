@@ -79,7 +79,7 @@ export const ItemQueries = extendType({
       },
     });
     t.field('FilterItemsByPrice', {
-      type: list('Item'),
+      type: nonNull(list(nonNull('Item'))),
       args: {
         input: arg({
           type: nonNull(FilterItemPriceArgs),
