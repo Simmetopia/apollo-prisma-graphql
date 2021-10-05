@@ -25,6 +25,7 @@ export const item = objectType({
     t.field(Item.User);
     t.field(Item.inShop);
     t.field(Item.url);
+    t.field(Item.rarity);
   },
 });
 
@@ -108,6 +109,7 @@ export const ItemQueries = extendType({
 
 var saberParts: string[] = ['Emitter', 'Switch', 'Body', 'Pommel', 'Blade'];
 var partNames: string[] = ['Commando', 'Outcast', 'Pathfinder'];
+var rarity: string[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
 var partDescriptions: string[] = [
   'This is a common item',
   'This is a uncommon',
@@ -153,14 +155,17 @@ export const ItemMutations = extendType({
         var saberNameString = partNames[Math.floor(Math.random() * partNames.length)];
         var partDescriptionsString;
         var price;
+        var itemRarity;
 
         for (let i = 0; i < 5; i++) {
           if (Math.floor(Math.random() * 2) < 1) {
+            itemRarity = rarity[i];
             partDescriptionsString = partDescriptions[i];
             price = getRandomInt(125 * i, 175 * i);
             break;
           }
           if (i === 4) {
+            itemRarity = rarity[4];
             partDescriptionsString = partDescriptions[4];
             price = getRandomInt(125 * i, 175 * i);
           }
@@ -173,6 +178,7 @@ export const ItemMutations = extendType({
               price: price,
               partName: saberNameString,
               partDescription: partDescriptionsString,
+              rarity: itemRarity,
               inShop: true,
               url: 'http://www.saberparts.com/Media/' + saberPartString + '.png?media=sm',
             },
@@ -184,6 +190,7 @@ export const ItemMutations = extendType({
               price: price,
               partName: saberNameString,
               partDescription: partDescriptionsString,
+              rarity: itemRarity,
               inShop: true,
               url: 'http://www.saberparts.com/Media/' + saberNameString + '%20' + saberPartString + '.png?media=sm',
             },
@@ -274,7 +281,12 @@ export const ItemMutations = extendType({
         } else {
           for (let i = 0; i < items.length; i++) {
             if (items[i].partName !== items[0].partName) {
-              throw new Error('You need to choise ' + saberParts.length + ' items of same name');
+              throw new Error('You need to choose ' + saberParts.length + ' items of same name');
+            }
+          }
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].rarity !== items[0].rarity) {
+              throw new Error('You need to choose items of same rarity');
             }
           }
           var emitterCount = 0;
@@ -327,6 +339,7 @@ export const ItemMutations = extendType({
               partName: items[0].partName,
               saberPart: 'Light Saber',
               userId: items[0].userId,
+              rarity: items[0].rarity,
               url: 'https://i.ibb.co/WBWsQrT/icons8-lightsaber-480.png',
               inShop: false,
               partDescription: 'Im passivly generating money',

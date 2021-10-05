@@ -91,6 +91,7 @@ export interface NexusGenObjects {
     partDescription?: string | null; // String
     partName?: string | null; // String
     price?: number | null; // Int
+    rarity?: string | null; // String
     saberPart?: string | null; // String
     url?: string | null; // String
     userId?: string | null; // String
@@ -133,6 +134,7 @@ export interface NexusGenFieldTypes {
     partDescription: string | null; // String
     partName: string | null; // String
     price: number | null; // Int
+    rarity: string | null; // String
     saberPart: string | null; // String
     url: string | null; // String
     userId: string | null; // String
@@ -191,6 +193,10 @@ export interface NexusGenFieldTypeNames {
     partDescription: 'String'
     partName: 'String'
     price: 'Int'
+<<<<<<< HEAD
+=======
+    rarity: 'String'
+>>>>>>> 7fc5d1903de24fe09b3a9ab566dfdd1032f51a26
     saberPart: 'String'
     url: 'String'
     userId: 'String'
