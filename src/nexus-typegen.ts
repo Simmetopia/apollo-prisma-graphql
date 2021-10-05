@@ -152,7 +152,7 @@ export interface NexusGenFieldTypes {
     userDetailsUpdate: NexusGenRootTypes['UserDetails'] | null; // UserDetails
   }
   Query: { // field return type
-    FilterItemsByPrice: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
+    FilterItemsByPrice: NexusGenRootTypes['Item'][]; // [Item!]!
     FilteringItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllItems: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
     GetAllItemsInShop: Array<NexusGenRootTypes['Item'] | null> | null; // [Item]
