@@ -54,6 +54,14 @@ export const UserQueries = extendType({
         return await context.db.user.findFirst({ where: { id: userId } });
       },
     });
+    t.field('userCart', {
+      type: nonNull(list(nonNull('Item'))),
+      args: { userId: nonNull(stringArg()) },
+      resolve: async (source, { userId }, context) => {
+        const user = await context.db.user.findFirst({ where: { id: userId }, include: { cart: true } });
+        return user?.cart!
+      },
+    });
   },
 });
 
