@@ -178,6 +178,7 @@ export const UserMutations = extendType({
               data: {
                 userId: userId,
                 inShop: false,
+                price: null,
               },
               where: {
                 id: itemId,

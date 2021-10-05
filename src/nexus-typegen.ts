@@ -193,10 +193,7 @@ export interface NexusGenFieldTypeNames {
     partDescription: 'String'
     partName: 'String'
     price: 'Int'
-<<<<<<< HEAD
-=======
     rarity: 'String'
->>>>>>> 7fc5d1903de24fe09b3a9ab566dfdd1032f51a26
     saberPart: 'String'
     url: 'String'
     userId: 'String'
