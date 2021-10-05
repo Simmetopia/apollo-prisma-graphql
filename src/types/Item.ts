@@ -98,7 +98,7 @@ export const ItemQueries = extendType({
         },
       }),
       resolve: async (Source, args, context) => {
-        const price = await context.db.item.aggregate({ _max: { price: true } });
+        const price = await context.db.item.aggregate({ _max: { price: true }, where: { inShop: { equals: true } } });
         const maxPrice = price._max.price ?? 0;
         return { price: maxPrice };
       },
