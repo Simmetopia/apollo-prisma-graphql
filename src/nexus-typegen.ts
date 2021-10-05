@@ -117,6 +117,7 @@ export interface NexusGenFieldTypes {
     filterItems: NexusGenRootTypes['Item'][]; // [Item!]!
     items: NexusGenRootTypes['Item'][]; // [Item!]!
     myq: string | null; // String
+    userCart: NexusGenRootTypes['Item'][]; // [Item!]!
     userDetails: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -172,6 +173,7 @@ export interface NexusGenFieldTypeNames {
     filterItems: 'Item'
     items: 'Item'
     myq: 'String'
+    userCart: 'Item'
     userDetails: 'User'
     users: 'User'
   }
@@ -228,6 +230,9 @@ export interface NexusGenArgTypes {
     }
     filterItems: { // args
       saberPart: string; // String!
+    }
+    userCart: { // args
+      userId: string; // String!
     }
     userDetails: { // args
       userId: string; // String!

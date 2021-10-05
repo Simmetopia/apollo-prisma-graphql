@@ -242,7 +242,7 @@ export const ItemMutations = extendType({
         itemId: nonNull(stringArg())
       },
       resolve: async (source, args, ctx) => {
-
+      
         return await ctx.db.user.update({
           where: { id: args.userId },
           data: {
@@ -323,7 +323,7 @@ function getPriceAndCheckOwner(buyer: import(".prisma/client").User & { cart: (i
     }
   });
 
-  if (unownedItems.length == 0)
+  if (unownedItems.length !== 0)
     throw new Error("Watto doesn't own these items" + unownedItems)
 
   return price
