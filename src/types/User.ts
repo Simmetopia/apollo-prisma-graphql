@@ -1,11 +1,17 @@
-import { User, $settings } from 'nexus-prisma';
-import { objectType, inputObjectType, extendType } from 'nexus';
+import { User, $settings, Item } from 'nexus-prisma';
+import { objectType, inputObjectType, extendType, nonNull, stringArg, list, arg, idArg } from 'nexus';
+import { AuthenticationError } from 'apollo-server-errors';
+import * as fs from 'fs';
 
 export const user = objectType({
   name: User.$name,
   description: User.$description,
   definition(t) {
     t.field(User.id);
+    t.field(User.username);
+    t.field(User.details);
+    t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
@@ -29,19 +35,55 @@ export const UserAuthType = inputObjectType({
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('myq', {
-      type: 'String',
+    t.field('GetUsersList', {
+      type: list('User'),
       resolve: (source, args, context) => {
-        context.db.user.findFirst();
-        return 'yes';
+        return context.db.user.findMany();
+      },
+    });
+    t.field('GetUser', {
+      type: 'User',
+      args: {
+        input: arg({
+          type: nonNull(
+            inputObjectType({
+              name: 'GetUserInputArgs',
+              definition(t) {
+                t.nonNull.id('id');
+              },
+            }),
+          ),
+        }),
+      },
+      resolve: (source, { input: { id } }, context) => {
+        return context.db.user.findFirst({
+          where: { id: id },
+        });
+      },
+    });
+    t.field('GetUserByUsername', {
+      type: 'User',
+      args: {
+        input: arg({
+          type: nonNull(
+            inputObjectType({
+              name: 'GetUserByUsernameInputArgs',
+              definition(t) {
+                t.nonNull.string('username');
+              },
+            }),
+          ),
+        }),
+      },
+      resolve: async (source, { input: { username } }, context) => {
+        const user = await context.db.user.findFirst({
+          where: { username: username },
+        });
+        if (!user) throw new AuthenticationError('User not found my dude');
+        return user;
       },
     });
   },
-});
-
-export const UserMutations = extendType({
-  type: 'Mutation',
-  definition(t) {},
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -56,4 +98,112 @@ export const BuyItemArgs = inputObjectType({
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
   definition(t) {},
+});
+
+export const UserMutations = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.field('userCreate', {
+      type: 'User',
+      args: {
+        input: arg({
+          type: nonNull(
+            inputObjectType({
+              name: 'UserCreateInputArgs',
+              definition(t) {
+                t.nonNull.string('username');
+              },
+            }),
+          ),
+        }),
+      },
+      resolve: async (source, { input: { username } }, context) => {
+        const user = await context.db.user.findFirst({
+          where: { username: username },
+        });
+        const swearWords = fs.readFileSync(__dirname + '/../types/txtFiles/badWords.txt', 'utf8');
+
+        const swear = swearWords.split('\n');
+
+        if (user === null) {
+          swear.map((word) => {
+            if (username.toLocaleLowerCase().includes(word)) {
+              throw new AuthenticationError(word + ' is a bad word. Swear words are not allowed');
+            }
+          });
+          return await context.db.user.create({
+            data: { username: username, money: 999 },
+          });
+        } else {
+          throw new AuthenticationError('User already exits my dude');
+        }
+      },
+    });
+    t.field('buyItem', {
+      type: 'User',
+      args: {
+        input: nonNull(
+          arg({
+            type: BuyItemArgs,
+          }),
+        ),
+      },
+      resolve: async (source, { input: { itemId, userId } }, context) => {
+        const result = await context.db.$transaction(async (prisma) => {
+          const foundItem = await prisma.item.findFirst({
+            where: {
+              id: itemId,
+            },
+          });
+
+          const currentOwner = foundItem?.userId;
+
+          if (foundItem != null) {
+            const buyUser = await prisma.user.update({
+              data: {
+                money: {
+                  decrement: foundItem.price || 0,
+                },
+              },
+              where: {
+                id: userId,
+              },
+            });
+
+            if (buyUser.money < 0) {
+              throw new Error('You do not have enough money!!!');
+            }
+
+            const updateItem = await prisma.item.update({
+              data: {
+                userId: userId,
+                inShop: false,
+                price: null,
+              },
+              where: {
+                id: itemId,
+              },
+            });
+
+            if (currentOwner != null) {
+              const sellUser = await prisma.user.update({
+                data: {
+                  money: {
+                    increment: foundItem.price || 0,
+                  },
+                },
+                where: {
+                  id: currentOwner,
+                },
+              });
+            }
+
+            return buyUser;
+          }
+        });
+
+        return result ?? null;
+      },
+    });
+  },
 });

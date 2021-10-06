@@ -5,6 +5,7 @@ datasource db {
 
 generator prisma_client_js {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 generator nexusPrisma {
@@ -33,6 +34,9 @@ model Item {
   partName        String
   partDescription String?
   price           Float?
+  inShop          Boolean?
+  url             String?
   User            User?   @relation(fields: [userId], references: [id])
   userId          String?
+  rarity          String?
 }

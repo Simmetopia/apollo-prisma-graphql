@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server';
 import { makeSchema } from 'nexus';
 import { $settings } from 'nexus-prisma';
 import * as types from './types';
-import path from 'path';
+import path, { join } from 'path';
 
 const server = new ApolloServer({
   schema: makeSchema({
@@ -12,10 +12,23 @@ const server = new ApolloServer({
       module: path.join(__dirname, 'types', 'context.ts'),
       export: 'ContextType',
     },
+    outputs: {
+      typegen: join(__dirname, 'nexus-typegen.ts'), // 2
+      schema: join(__dirname, 'schema.graphql'), // 3
+    },
   }),
-  context() {
+  context(fgh) {
+    const [_, token] = fgh.req.header('authorization')?.split(' ') ?? [];
+    if (token) {
+      // jwt parsing
+    }
+
     return {
       db: new PrismaClient(), // <-- You put Prisma client on the "db" context property
+      user: {
+        userId: 'something from token',
+        username: 'something from token',
+      },
     };
   },
 });
