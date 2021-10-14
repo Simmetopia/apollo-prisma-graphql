@@ -30,7 +30,7 @@ interface ConnectionParams {
 
 const server = new ApolloServer({
   cors: {
-    origin: 'https://notacult.herokuapp.com/',
+    origin: '*',
     credentials: true,
   },
   schema: schemaWithMiddleware,
