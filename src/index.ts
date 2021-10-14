@@ -53,7 +53,6 @@ const server = new ApolloServer({
   async context(httpContext) {
     if (httpContext.connection) {
       // check connection for metadata
-
       return {
         db,
         user: httpContext.connection.context.user,
