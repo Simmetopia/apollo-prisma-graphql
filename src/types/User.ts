@@ -39,21 +39,21 @@ interface MoneyPayload {
   userId: string;
 }
 
-export const UserSubscriptions = extendType({
-  type: 'Subscription',
-  definition(t) {
-    t.int('userMoney', {
-      subscribe(source, args, ctx) {
-        return ctx.pubSub.asyncIterator(['USER_MONEY']);
-      },
-      resolve: async (payload: MoneyPayload, args, ctx) => {
-        const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
+// export const UserSubscriptions = extendType({
+//   type: 'Subscription',
+//   definition(t) {
+//     t.int('userMoney', {
+//       subscribe(source, args, ctx) {
+//         return ctx.pubSub.asyncIterator(['USER_MONEY']);
+//       },
+//       resolve: async (payload: MoneyPayload, args, ctx) => {
+//         const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
 
-        return user!.money;
-      },
-    });
-  },
-});
+//         return user!.money;
+//       },
+//     });
+//   },
+// });
 
 export const UserQueries = extendType({
   type: 'Query',

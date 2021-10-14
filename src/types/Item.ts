@@ -146,7 +146,7 @@ export const ItemMutations = extendType({
             const error = err as Error;
             throw new ApolloError(error.message);
           } finally {
-            ctx.pubSub.publish('USER_MONEY', { userId: ctx.user?.id.toString() });
+            // ctx.pubSub.publish('USER_MONEY', { userId: ctx.user?.id.toString() });
           }
         },
       }),
@@ -256,7 +256,7 @@ export const ItemMutations = extendType({
             const error = err as Error;
             throw new ApolloError(error.message);
           } finally {
-            ctx.pubSub.publish('USER_MONEY', { userId: ctx.user?.id.toString() });
+            // ctx.pubSub.publish('USER_MONEY', { userId: ctx.user?.id.toString() });
           }
         },
       });
