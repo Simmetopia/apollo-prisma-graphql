@@ -29,6 +29,7 @@ interface ConnectionParams {
 }
 
 const server = new ApolloServer({
+  cors: true,
   schema: schemaWithMiddleware,
   subscriptions: {
     path: '/subscriptions',
