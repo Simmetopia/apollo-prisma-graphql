@@ -89,7 +89,7 @@ $settings({
 });
 
 const port = process.env.PORT || 4000;
-server.listen({ port }, () => {
-  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
-  console.log(`🚀 Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`);
+server.listen({ port }).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+  // console.log(`🚀 Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`);
 });
