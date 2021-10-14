@@ -6,19 +6,28 @@
     "start": "ts-node-dev --ignore-watch star-wars-typegen.ts --no-notify --transpile-only --respawn ./src"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^8.2.0",
     "@prisma/client": "^3.1.1",
     "@types/jsonwebtoken": "^8.5.5",
     "apollo-server": "^2.18.1",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
     "faker": "^5.5.3",
     "graphql": "^15.5.3",
+    "graphql-middleware": "^6.1.7",
+    "graphql-shield": "^7.5.0",
+    "graphql-subscriptions": "^1.2.1",
     "graphql-tools": "^4.0.7",
     "jsonwebtoken": "^8.5.1",
     "nexus": "^1.1.0",
+    "nexus-plugin-shield": "^0.2.0",
     "nexus-prisma": "^0.34.0",
     "react-router-dom": "^5.3.0",
+    "subscriptions-transport-ws": "^0.9.19",
     "ts-node-dev": "^1.0.0-pre.30"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/faker": "^5.5.8",
     "@types/node": "16.9.0",
     "@typescript-eslint/eslint-plugin": "^4.31.0",

@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { datatype, lorem, random } from 'faker';
+import { hash, compare } from 'bcrypt'
 
 const client = new PrismaClient(/*{ log: ['query', 'info'] }*/);
 
 const WEBSHOP_OWNER = 'dark_saber_dealer_69';
+const WEBSHOP_PASSWORD = 'password';
 
 const createSaberParts = () => {
   return ["Addon", "Body", "Emitter", "Pommel", "Switch"];
@@ -45,6 +47,7 @@ async function main() {
   await client.user.create({
     data: {
       username: "soup",
+      password: await hash("soop", 12),
       details: { create: { firstName: 'Soup', lastName: 'Soap' } },
       money: 69420,
     },
@@ -78,6 +81,7 @@ async function main() {
   await client.user.create({
     data: {
       username: WEBSHOP_OWNER,
+      password: await hash(WEBSHOP_PASSWORD, 12),
       inventory: { create: await createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,

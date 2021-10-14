@@ -23,9 +23,6 @@ export interface NexusGenInputs {
     partName?: string | null; // String
     saberPart?: string | null; // String
   }
-  UserAuthInput: { // input type
-    username: string; // String!
-  }
   UserDetailsUpdateArgs: { // input type
     firstName?: string | null; // String
     id?: string | null; // ID
@@ -51,6 +48,11 @@ export interface NexusGenObjects {
     price?: number | null; // Int
     userId?: string | null; // String
   }
+  Login: { // root type
+    id?: string | null; // ID
+    token?: string | null; // String
+    username?: string | null; // String
+  }
   Mutation: {};
   PartName: { // root type
     id: string; // ID!
@@ -61,9 +63,11 @@ export interface NexusGenObjects {
     id: string; // ID!
     name: string; // String!
   }
+  Subscription: {};
   User: { // root type
     id: string; // ID!
     money: number; // Int!
+    token?: string | null; // String
     username: string; // String!
   }
   UserDetails: { // root type
@@ -95,17 +99,21 @@ export interface NexusGenFieldTypes {
     price: number | null; // Int
     userId: string | null; // String
   }
+  Login: { // field return type
+    id: string | null; // ID
+    token: string | null; // String
+    username: string | null; // String
+  }
   Mutation: { // field return type
     _deprecated_field: string | null; // String
     addToCart: NexusGenRootTypes['Item']; // Item!
     buyCart: NexusGenRootTypes['Item'][]; // [Item!]!
-    itemBuy: NexusGenRootTypes['Item'] | null; // Item
     itemCreate: NexusGenRootTypes['Item'] | null; // Item
     itemSell: NexusGenRootTypes['Item'] | null; // Item
     itemUpdatePrice: NexusGenRootTypes['Item'][]; // [Item!]!
     removeFromCart: NexusGenRootTypes['Item']; // Item!
-    userCreate: NexusGenRootTypes['User'] | null; // User
-    userLogin: NexusGenRootTypes['User'] | null; // User
+    userCreate: NexusGenRootTypes['Login']; // Login!
+    userLogin: NexusGenRootTypes['Login']; // Login!
   }
   PartName: { // field return type
     id: string; // ID!
@@ -116,7 +124,6 @@ export interface NexusGenFieldTypes {
     displayItems: NexusGenRootTypes['Item'][]; // [Item!]!
     filterItems: NexusGenRootTypes['Item'][]; // [Item!]!
     items: NexusGenRootTypes['Item'][]; // [Item!]!
-    myq: string | null; // String
     userCart: NexusGenRootTypes['Item'][]; // [Item!]!
     userDetails: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
@@ -125,11 +132,15 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     name: string; // String!
   }
+  Subscription: { // field return type
+    userMoney: number | null; // Int
+  }
   User: { // field return type
     cart: NexusGenRootTypes['Item'][]; // [Item!]!
     id: string; // ID!
     inventory: NexusGenRootTypes['Item'][]; // [Item!]!
     money: number; // Int!
+    token: string | null; // String
     username: string; // String!
   }
   UserDetails: { // field return type
@@ -151,17 +162,21 @@ export interface NexusGenFieldTypeNames {
     price: 'Int'
     userId: 'String'
   }
+  Login: { // field return type name
+    id: 'ID'
+    token: 'String'
+    username: 'String'
+  }
   Mutation: { // field return type name
     _deprecated_field: 'String'
     addToCart: 'Item'
     buyCart: 'Item'
-    itemBuy: 'Item'
     itemCreate: 'Item'
     itemSell: 'Item'
     itemUpdatePrice: 'Item'
     removeFromCart: 'Item'
-    userCreate: 'User'
-    userLogin: 'User'
+    userCreate: 'Login'
+    userLogin: 'Login'
   }
   PartName: { // field return type name
     id: 'ID'
@@ -172,7 +187,6 @@ export interface NexusGenFieldTypeNames {
     displayItems: 'Item'
     filterItems: 'Item'
     items: 'Item'
-    myq: 'String'
     userCart: 'Item'
     userDetails: 'User'
     users: 'User'
@@ -181,11 +195,15 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     name: 'String'
   }
+  Subscription: { // field return type name
+    userMoney: 'Int'
+  }
   User: { // field return type name
     cart: 'Item'
     id: 'ID'
     inventory: 'Item'
     money: 'Int'
+    token: 'String'
     username: 'String'
   }
   UserDetails: { // field return type name
@@ -200,27 +218,19 @@ export interface NexusGenArgTypes {
   Mutation: {
     addToCart: { // args
       itemId: string; // String!
-      userId: string; // String!
-    }
-    buyCart: { // args
-      userId: string; // String!
-    }
-    itemBuy: { // args
-      itemId: string; // String!
-      userBuyerId: string; // String!
     }
     itemSell: { // args
       itemId: string; // String!
-      userSellerId: string; // String!
     }
     removeFromCart: { // args
       itemId: string; // String!
-      userId: string; // String!
     }
     userCreate: { // args
+      password: string; // String!
       username: string; // String!
     }
     userLogin: { // args
+      password: string; // String!
       username: string; // String!
     }
   }
@@ -230,12 +240,6 @@ export interface NexusGenArgTypes {
     }
     filterItems: { // args
       saberPart: string; // String!
-    }
-    userCart: { // args
-      userId: string; // String!
-    }
-    userDetails: { // args
-      userId: string; // String!
     }
   }
 }

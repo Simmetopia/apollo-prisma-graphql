@@ -1,4 +1,6 @@
-import { AuthenticationError } from 'apollo-server-errors';
+import { ApolloError } from 'apollo-server-errors';
+import { compare, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
 import { User } from 'nexus-prisma';
 
@@ -11,6 +13,16 @@ export const user = objectType({
     t.field(User.inventory);
     t.field(User.money);
     t.field(User.cart);
+    t.string('token');
+  },
+});
+
+export const login = objectType({
+  name: 'Login',
+  definition(t) {
+    t.id('id');
+    t.field('username', { type: 'String' });
+    t.string('token');
   },
 });
 
@@ -23,25 +35,30 @@ export const UserUpdateInputArgs = inputObjectType({
   },
 });
 
-export const UserAuthType = inputObjectType({
-  name: 'UserAuthInput',
-  nonNullDefaults: { input: true },
-  definition: (t) => {
-    t.string('username');
+interface MoneyPayload {
+  userId: string;
+}
+
+export const UserSubscriptions = extendType({
+  type: 'Subscription',
+  definition(t) {
+    t.int('userMoney', {
+      subscribe(source, args, ctx) {
+        return ctx.pubSub.asyncIterator(['USER_MONEY']);
+      },
+      resolve: async (payload: MoneyPayload, args, ctx) => {
+        const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
+
+        return user!.money;
+      },
+    });
   },
 });
 
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('myq', {
-      type: 'String',
-      resolve: (source, args, context) => {
-        context.db.user.findFirst();
-        return 'yes';
-      },
-    });
-    t.field("users", {
+    t.field('users', {
       type: nonNull(list(nonNull('User'))),
       resolve: (source, args, ctx) => {
         return ctx.db.user.findMany();
@@ -49,54 +66,73 @@ export const UserQueries = extendType({
     });
     t.field('userDetails', {
       type: 'User',
-      args: { userId: nonNull(stringArg()) },
-      resolve: async (source, { userId }, context) => {
-        return await context.db.user.findFirst({ where: { id: userId } });
+      resolve: async (source, args, ctx) => {
+        ctx.pubSub.publish('USER_MONEY', { userId: ctx.user?.id.toString() });
+        return await ctx.db.user.findFirst({ where: { id: ctx.user?.id.toString() } });
       },
     });
     t.field('userCart', {
       type: nonNull(list(nonNull('Item'))),
-      args: { userId: nonNull(stringArg()) },
-      resolve: async (source, { userId }, context) => {
-        const user = await context.db.user.findFirst({ where: { id: userId }, include: { cart: true } });
-        return user?.cart!
+      resolve: async (source, args, ctx) => {
+        const user = await ctx.db.user.findFirst({ where: { id: ctx.user?.id.toString() }, include: { cart: true } });
+        return user?.cart!;
       },
     });
   },
 });
 
-
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('userCreate', {
-      type: 'User',
-      args: { username: nonNull(stringArg()) },
-      resolve: async (source, { username }, ctx) => {
+      type: nonNull('Login'),
+      args: {
+        username: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+      },
+      resolve: async (source, { username, password }, ctx, {}) => {
+        const anyUser = await ctx.db.user.findFirst({ where: { username } });
 
-        const user = await ctx.db.user.findFirst({ where: { username } });
-
-        if (user) {
-          throw new AuthenticationError("Username already in use")
+        if (anyUser) {
+          throw new ApolloError('Username already in use');
         }
 
-        return await ctx.db.user.create({ data: { username, money: 200 } })
-      }
+        const user = await ctx.db.user.create({
+          data: {
+            password: await hash(password, 12),
+            username,
+            money: 200,
+          },
+        });
+
+        return {
+          token: await sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '60m' }),
+          username: user.username,
+          id: user.id,
+        };
+      },
     });
     t.field('userLogin', {
-      type: 'User',
-      args: { username: nonNull(stringArg()) },
-      resolve: async (source, { username }, ctx) => {
+      type: nonNull('Login'),
+      args: {
+        username: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+      },
 
-        const user = await ctx.db.user.findFirst( {where: {username}, include: {inventory: true }})
+      resolve: async (source, { username, password }, ctx) => {
+        const user = await ctx.db.user.findFirst({ where: { username }, include: { inventory: true } });
 
-        if (!user) {
-          throw new AuthenticationError("User not found: " + username)
+        if (!user || !(await compare(password, user.password))) {
+          throw new ApolloError('Invalid username/password');
         }
 
-        return user;
-      }
-    })
+        return {
+          token: sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '30m' }),
+          username: user.username,
+          id: user.id,
+        };
+      },
+    });
   },
 });
 
@@ -111,5 +147,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {},
 });
