@@ -127,7 +127,7 @@ export const UserMutations = extendType({
         }
 
         return {
-          token: sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '30m' }),
+          token: await sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '30m' }),
           username: user.username,
           id: user.id,
         };
