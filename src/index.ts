@@ -34,6 +34,7 @@ const server = new ApolloServer({
     path: '/subscriptions',
     onConnect: async (connectionParams: ConnectionParams, webSocket, context) => {
       console.log('Client connected');
+
       try {
         if (connectionParams.authorization) {
           const header = connectionParams.authorization?.split(' ');
