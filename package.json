@@ -44,7 +44,6 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
-  
   "engines": {
     "node": "16.x",
     "yarn": "1.x"
