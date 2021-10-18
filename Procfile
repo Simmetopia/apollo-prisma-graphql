@@ -1,1 +1,1 @@
-Web: yarn start && ts-node-dev --ignore-watch star-wars-typegen.ts --no-notify --transpile-only --respawn ./src
+Web: yarn start
