@@ -34,12 +34,12 @@ const server = new ApolloServer({
     path: '/subscriptions',
     onConnect: async (connectionParams: ConnectionParams, webSocket, context) => {
       console.log('Client connected');
-
       try {
         if (connectionParams.authorization) {
           const header = connectionParams.authorization?.split(' ');
           const [bearer, token] = header || [];
-          await verify(token || '', process.env.SECRET! || '123456');
+          const user: { userId: string } = (await verify(token || '', process.env.SECRET!)) as any;
+          return { userId: user.userId };
         }
       } catch {
         throw new AuthenticationError('UNAUTHENTICATED');
@@ -53,9 +53,12 @@ const server = new ApolloServer({
   async context(httpContext) {
     if (httpContext.connection) {
       // check connection for metadata
+      console.log('connection:', httpContext.connection.context.userId);
       return {
         db,
-        user: httpContext.connection.context.user,
+        user: await db.user.findUnique({
+          where: { id: httpContext.connection.context.userId },
+        }),
         pubSub,
       };
     }
@@ -64,7 +67,7 @@ const server = new ApolloServer({
       const header = httpContext.req.header('authorization')?.split(' ');
       const [bearer, token] = header || [];
 
-      const user: { userId: string } = (await verify(token || '', process.env.SECRET! || '123456')) as any;
+      const user: { userId: string } = (await verify(token || '', process.env.SECRET!)) as any;
       const context = {
         db,
         // <-- You put Prisma client on the "db" context property

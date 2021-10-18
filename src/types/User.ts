@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-errors';
+import { withFilter } from 'apollo-server-express';
 import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { extendType, inputObjectType, list, nonNull, objectType, stringArg } from 'nexus';
@@ -43,9 +44,14 @@ export const UserSubscriptions = extendType({
   type: 'Subscription',
   definition(t) {
     t.int('userMoney', {
-      subscribe(source, args, ctx) {
-        return ctx.pubSub.asyncIterator(['USER_MONEY']);
-      },
+      subscribe: withFilter(
+        (source, args, ctx) => {
+          return ctx.pubSub.asyncIterator(['USER_MONEY']);
+        },
+        (payload: MoneyPayload, args, ctx) => {
+          return payload.userId == ctx.user?.id;
+        },
+      ),
       resolve: async (payload: MoneyPayload, args, ctx) => {
         const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
 
@@ -106,7 +112,7 @@ export const UserMutations = extendType({
         });
 
         return {
-          token: await sign({ userId: user.id }, process.env.SECRET! || '123456', { expiresIn: '60m' }),
+          token: await sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '60m' }),
           username: user.username,
           id: user.id,
         };
@@ -127,7 +133,7 @@ export const UserMutations = extendType({
         }
 
         return {
-          token: await sign({ userId: user.id }, process.env.SECRET! || '123456', { expiresIn: '30m' }),
+          token: await sign({ userId: user.id }, process.env.SECRET!, { expiresIn: '30m' }),
           username: user.username,
           id: user.id,
         };
