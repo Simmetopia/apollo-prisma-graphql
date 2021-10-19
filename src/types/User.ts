@@ -54,7 +54,6 @@ export const UserSubscriptions = extendType({
       ),
       resolve: async (payload: MoneyPayload, args, ctx) => {
         const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
-
         return user!.money;
       },
     });
