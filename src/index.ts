@@ -65,7 +65,6 @@ const server = new ApolloServer({
     try {
       const header = httpContext.req.header('authorization')?.split(' ');
       const [bearer, token] = header || [];
-
       const user: { userId: string } = (await verify(token || '', process.env.SECRET!)) as any;
       const context = {
         db,
