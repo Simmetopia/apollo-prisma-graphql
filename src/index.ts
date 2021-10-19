@@ -53,7 +53,6 @@ const server = new ApolloServer({
   async context(httpContext) {
     if (httpContext.connection) {
       // check connection for metadata
-      console.log('connection:', httpContext.connection.context.userId);
       return {
         db,
         user: await db.user.findUnique({

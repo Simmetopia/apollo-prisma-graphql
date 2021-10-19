@@ -128,7 +128,7 @@ export const UserMutations = extendType({
       resolve: async (source, { username, password }, ctx) => {
         const user = await ctx.db.user.findFirst({ where: { username }, include: { inventory: true } });
 
-        if (!user || !(await compare(password, user.password))) {
+        if (!user || !(await compare(password.toLowerCase(), user.password.toLowerCase()))) {
           throw new ApolloError('Invalid username/password');
         }
 
