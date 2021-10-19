@@ -49,11 +49,14 @@ export const UserSubscriptions = extendType({
           return ctx.pubSub.asyncIterator(['USER_MONEY']);
         },
         (payload: MoneyPayload, args, ctx) => {
+          console.log(ctx.user?.id);
           return payload.userId == ctx.user?.id;
         },
       ),
       resolve: async (payload: MoneyPayload, args, ctx) => {
+        console.log(ctx.user?.id);
         const user = await ctx.db.user.findFirst({ where: { id: payload.userId } });
+
         return user!.money;
       },
     });
@@ -106,7 +109,7 @@ export const UserMutations = extendType({
           data: {
             password: await hash(password, 12),
             username,
-            money: 200,
+            money: 3000,
           },
         });
 
@@ -127,7 +130,7 @@ export const UserMutations = extendType({
       resolve: async (source, { username, password }, ctx) => {
         const user = await ctx.db.user.findFirst({ where: { username }, include: { inventory: true } });
 
-        if (!user || !(await compare(password.toLowerCase(), user.password.toLowerCase()))) {
+        if (!user || !(await compare(password, user.password))) {
           throw new ApolloError('Invalid username/password');
         }
 
