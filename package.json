@@ -8,7 +8,7 @@
   "dependencies": {
     "@prisma/client": "2.30",
     "@types/jsonwebtoken": "^8.5.5",
-    "apollo-server": "^2.18.1",
+    "apollo-server": "^2.25.3",
     "faker": "^5.5.3",
     "graphql": "^15.5.3",
     "graphql-tools": "^4.0.7",
