@@ -1,8 +1,5 @@
-import { company, lorem, random } from 'faker';
-import { objectType, inputObjectType, idArg, arg, extendType } from 'nexus';
-import {Item} from "nexus-prisma"
-
-
+import { extendType, inputObjectType, objectType } from 'nexus';
+import { Item } from 'nexus-prisma';
 
 export const item = objectType({
   name: Item.$name,
@@ -25,13 +22,10 @@ export const ItemArgs = inputObjectType({
 
 export const ItemQueries = extendType({
   type: 'Query',
-  definition: (t) => {
-  },
+  definition: (t) => {},
 });
 
 export const ItemMutations = extendType({
   type: 'Mutation',
-  definition: (t) => {
-
-  },
+  definition: (t) => {},
 });

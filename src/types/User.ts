@@ -1,5 +1,5 @@
-import { User, $settings } from 'nexus-prisma';
-import { objectType, inputObjectType, extendType } from 'nexus';
+import { extendType, inputObjectType, objectType } from 'nexus';
+import { User } from 'nexus-prisma';
 
 export const user = objectType({
   name: User.$name,
@@ -32,6 +32,7 @@ export const UserQueries = extendType({
   definition: (t) => {
     t.field('myq', {
       type: 'String',
+      args: { data: UserUpdateInputArgs },
       resolve: async (source, args, context) => {
         return 'yes';
       },

@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from 'apollo-server';
-import { makeSchema, connectionPlugin } from 'nexus';
-import { $settings } from 'nexus-prisma';
-import * as types from './types';
-import path, { join } from 'path';
 import { GraphQLSchema } from 'graphql';
+import { makeSchema } from 'nexus';
+import { $settings } from 'nexus-prisma';
+import path, { join } from 'path';
+
+import * as types from './types';
 
 const shema = makeSchema({
   types,
@@ -19,7 +19,7 @@ const shema = makeSchema({
 });
 
 const server = new ApolloServer({
-  schema: shema as any as GraphQLSchema,
+  schema: shema as unknown as GraphQLSchema,
 });
 
 $settings({
