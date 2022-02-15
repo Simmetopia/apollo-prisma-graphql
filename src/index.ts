@@ -1,23 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from 'apollo-server';
-import { makeSchema } from 'nexus';
+import { makeSchema, connectionPlugin } from 'nexus';
 import { $settings } from 'nexus-prisma';
 import * as types from './types';
 import path from 'path';
+import { GraphQLSchema } from 'graphql';
+
+const shema = makeSchema({
+  types,
+  contextType: {
+    module: path.join(__dirname, 'types', 'context.ts'),
+    export: 'ContextType',
+  },
+});
 
 const server = new ApolloServer({
-  schema: makeSchema({
-    types,
-    contextType: {
-      module: path.join(__dirname, 'types', 'context.ts'),
-      export: 'ContextType',
-    },
-  }),
-  context() {
-    return {
-      db: new PrismaClient(), // <-- You put Prisma client on the "db" context property
-    };
-  },
+  schema: shema as any as GraphQLSchema,
 });
 
 $settings({

@@ -6,6 +6,7 @@ export const user = objectType({
   description: User.$description,
   definition(t) {
     t.field(User.id);
+    t.field(User.username);
   },
 });
 
@@ -31,8 +32,7 @@ export const UserQueries = extendType({
   definition: (t) => {
     t.field('myq', {
       type: 'String',
-      resolve: (source, args, context) => {
-        context.db.user.findFirst();
+      resolve: async (source, args, context) => {
         return 'yes';
       },
     });
