@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server';
 import { makeSchema, connectionPlugin } from 'nexus';
 import { $settings } from 'nexus-prisma';
 import * as types from './types';
-import path from 'path';
+import path, { join } from 'path';
 import { GraphQLSchema } from 'graphql';
 
 const shema = makeSchema({
@@ -11,6 +11,10 @@ const shema = makeSchema({
   contextType: {
     module: path.join(__dirname, 'types', 'context.ts'),
     export: 'ContextType',
+  },
+  outputs: {
+    typegen: join(__dirname, 'nexus-typegen.ts'), // 2
+    schema: join(__dirname, 'schema.graphql'), // 3
   },
 });
 
