@@ -21,20 +21,19 @@ export const UserUpdateInputArgs = inputObjectType({
 
 export const UserAuthType = inputObjectType({
   name: 'UserAuthInput',
-  nonNullDefaults: { input: true },
+
   definition: (t) => {
-    t.string('username');
+    t.nonNull.string('username');
   },
 });
 
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('myq', {
-      type: 'String',
-      args: { data: UserUpdateInputArgs },
+    t.field('first_user', {
+      type: 'User',
       resolve: async (source, args, context) => {
-        return 'yes';
+        return context.db.user.findFirstOrThrow();
       },
     });
   },
@@ -42,7 +41,7 @@ export const UserQueries = extendType({
 
 export const UserMutations = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) { },
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -56,5 +55,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) { },
 });

@@ -1,4 +1,6 @@
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { PrismaClient } from '@prisma/client';
 import { GraphQLSchema } from 'graphql';
 import { makeSchema } from 'nexus';
 import { $settings } from 'nexus-prisma';
@@ -17,7 +19,7 @@ const shema = makeSchema({
     schema: join(__dirname, 'schema.graphql'), // 3
   },
 });
-
+const prisma_client = new PrismaClient();
 const server = new ApolloServer({
   schema: shema as unknown as GraphQLSchema,
 });
@@ -25,6 +27,16 @@ const server = new ApolloServer({
 $settings({
   prismaClientContextField: 'db', // <-- Tell Nexus Prisma
 });
-const port = process.env.PORT || 4000;
+const port = Number(process.env.PORT) || 4000;
 
-server.listen({ port }, () => console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`));
+startStandaloneServer(server, {
+  listen: { port: port },
+  context: async (request) => {
+    return {
+      ...request,
+      db: prisma_client,
+    };
+  },
+}).then((app) => {
+  console.log(`🚀  Server ready at: ${app.url}`);
+});

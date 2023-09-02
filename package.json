@@ -3,14 +3,14 @@
   "author": "Simon Bundgaard-Egeberg",
   "version": "0.0.1",
   "scripts": {
-    "start": "ts-node-dev --ignore-watch star-wars-typegen.ts --no-notify --transpile-only --respawn ./src"
+    "start": "ts-node-dev --ignore src/nexus-typegen.ts --transpile-only --respawn ./src"
   },
   "dependencies": {
+    "@apollo/server": "^4.9.3",
     "@prisma/client": "5.2.0",
     "@types/jsonwebtoken": "^9.0.2",
-    "apollo-server": "^3.12.1",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "faker": "^5.5.3",
+    "faker": "5.5.3",
     "graphql": "^16.8.0",
     "graphql-tools": "^9.0.0",
     "jsonwebtoken": "^9.0.2",
@@ -19,7 +19,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
-    "@types/faker": "^6.6.8",
+    "@types/faker": "5.5.3",
     "@types/node": "17.0.18",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
