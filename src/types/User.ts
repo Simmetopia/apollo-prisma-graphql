@@ -19,14 +19,6 @@ export const UserUpdateInputArgs = inputObjectType({
   },
 });
 
-export const UserAuthType = inputObjectType({
-  name: 'UserAuthInput',
-
-  definition: (t) => {
-    t.nonNull.string('username');
-  },
-});
-
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
@@ -39,9 +31,41 @@ export const UserQueries = extendType({
   },
 });
 
+export const UserAuthType = inputObjectType({
+  name: 'UserAuthInput',
+
+  definition: (t) => {
+    t.nonNull.string('username');
+    t.nonNull.string('password');
+  },
+});
+
 export const UserMutations = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {
+    t.field('login', {
+      type: 'User',
+      args: {
+        input: 'UserAuthInput',
+      },
+      resolve: async (source, { input }, context) => {
+        // Find the user by username
+        const user = await context.db.user.findFirstOrThrow({
+          where: { username: input.username },
+        });
+
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        if (input?.password != user.password) {
+          throw new Error('Invalid password');
+        }
+
+        return user;
+      },
+    });
+  },
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -55,5 +79,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {},
 });

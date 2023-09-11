@@ -24,6 +24,7 @@ model User {
   username  String       @unique
   details   UserDetails?
   inventory Item[]
+  password  String
   money     Int
 }
 
