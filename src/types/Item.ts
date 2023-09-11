@@ -8,6 +8,9 @@ export const item = objectType({
     t.field('saberPart', {
       type: 'String',
     });
+    t.field('partName', {
+      type: 'String',
+    });
   },
 });
 

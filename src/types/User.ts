@@ -1,4 +1,4 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import { extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -35,13 +35,22 @@ export const UserQueries = extendType({
       resolve: async (source, args, context) => {
         return context.db.user.findFirstOrThrow();
       },
-    });
+    }),
+      t.list.field('getAllUserItemsById', {
+        type: 'Item',
+        args: {
+          input: nonNull(stringArg()),
+        },
+        resolve: async (source, args, context) => {
+          return context.db.user.findUnique({ where: { id: args.input } }).inventory();
+        },
+      });
   },
 });
 
 export const UserMutations = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {},
 });
 
 export const BuyItemArgs = inputObjectType({
@@ -55,5 +64,5 @@ export const BuyItemArgs = inputObjectType({
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {},
 });
