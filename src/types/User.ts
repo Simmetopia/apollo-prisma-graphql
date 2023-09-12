@@ -1,4 +1,5 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import bcrypt from 'bcrypt';
+import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -40,28 +41,29 @@ export const UserAuthType = inputObjectType({
   },
 });
 
+// Verify a password using bcrypt
+async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  return bcrypt.compare(plainPassword, hashedPassword);
+}
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('login', {
       type: 'User',
       args: {
-        input: 'UserAuthInput',
+        input: nonNull(arg({ type: 'UserAuthInput' })),
       },
       resolve: async (source, { input }, context) => {
         // Find the user by username
         const user = await context.db.user.findFirstOrThrow({
-          where: { username: input.username },
+          where: { username: input?.username },
         });
 
-        if (!user) {
-          throw new Error('User not found');
-        }
+        const passwordMatch = await verifyPassword(input.password, user.password);
 
-        if (input?.password != user.password) {
+        if (!passwordMatch) {
           throw new Error('Invalid password');
         }
-
         return user;
       },
     });
