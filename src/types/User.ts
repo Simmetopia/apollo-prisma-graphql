@@ -69,6 +69,27 @@ export const UserMutations = extendType({
       },
     });
   },
+  definition(t) {
+    t.field('Signup', {
+      type: 'User',
+      args: {
+        input: nonNull(
+          arg({
+            type: 'UserAuthInput',
+          }),
+        ),
+      },
+      resolve: async (source, { input }, context) => {
+        const user = await context.db.user.create({
+          User: {
+            username: input.username,
+            password: input.password,
+          },
+        });
+        return user;
+      },
+    });
+  },
 });
 
 export const BuyItemArgs = inputObjectType({
