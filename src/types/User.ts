@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
@@ -68,8 +69,7 @@ export const UserMutations = extendType({
         return user;
       },
     });
-  },
-  definition(t) {
+
     t.field('Signup', {
       type: 'User',
       args: {
@@ -80,10 +80,13 @@ export const UserMutations = extendType({
         ),
       },
       resolve: async (source, { input }, context) => {
+        const hashedPassword = await bcrypt.hash(input.password, 12);
+
         const user = await context.db.user.create({
-          User: {
+          data: {
             username: input.username,
-            password: input.password,
+            password: hashedPassword,
+            money: 21000,
           },
         });
         return user;
