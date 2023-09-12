@@ -8,6 +8,7 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.money);
   },
 });
 
@@ -24,7 +25,7 @@ export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
     t.field('first_user', {
-      type: 'User',
+      type: nonNull('User'),
       resolve: async (source, args, context) => {
         return context.db.user.findFirstOrThrow();
       },
