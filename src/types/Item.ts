@@ -57,5 +57,23 @@ export const ItemMutations = extendType({
         });
       },
     });
+    t.field('updateItemById', {
+      type: 'Item',
+      args: {
+        partname: nonNull(stringArg()),
+        newUserId: nonNull(stringArg()),
+      },
+      resolve: async (source, args, context) => {
+        const item = await context.db.item.findFirstOrThrow({ where: { partName: { equals: args.partname } } });
+
+        // Update the user ID of the found item
+        const updatedItem = await context.db.item.update({
+          where: { id: item.id }, // Assuming 'id' is the unique identifier of the item
+          data: { userId: args.newUserId },
+        });
+
+        return updatedItem;
+      },
+    });
   },
 });
