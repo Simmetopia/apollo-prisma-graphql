@@ -1,4 +1,5 @@
-import { verify } from 'argon2';
+import { hash, verify } from 'argon2';
+import { datatype } from 'faker';
 import { sign } from 'jsonwebtoken';
 import { extendType, inputObjectType, nonNull, objectType } from 'nexus';
 
@@ -35,6 +36,21 @@ export const mutations = extendType({
         if (!valid) {
           throw new Error('Invalid login credentials');
         }
+
+        return { user, token: sign({ user }, omega_token_secret) };
+      },
+    });
+    t.field('register', {
+      type: 'AuthObject',
+      args: { auth: nonNull(AuthInputObject) },
+      resolve: async (source, args, context) => {
+        const user = await context.db.user.create({
+          data: {
+            username: args.auth.username,
+            password: await hash(args.auth.password),
+            money: datatype.number(350),
+          },
+        });
 
         return { user, token: sign({ user }, omega_token_secret) };
       },

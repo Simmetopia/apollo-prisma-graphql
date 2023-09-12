@@ -7,6 +7,7 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.money);
   },
 });
 
