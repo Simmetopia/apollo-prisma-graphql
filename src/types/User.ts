@@ -1,4 +1,4 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import { extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -32,8 +32,17 @@ export const UserQueries = extendType({
   definition: (t) => {
     t.field('first_user', {
       type: 'User',
-      resolve: async (source, args, context) => {
+      resolve: async (_source, args, context) => {
         return context.db.user.findFirstOrThrow();
+      },
+    });
+    t.field('user', {
+      type: 'User',
+      args: { id: nonNull(stringArg()) },
+      resolve: async (_source, args, context) => {
+        return context.db.user.findUnique({
+          where: { id: args.id },
+        });
       },
     });
   },

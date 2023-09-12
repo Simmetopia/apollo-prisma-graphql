@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'argon2';
 import { commerce, lorem, random } from 'faker';
 
 import { SaberParts } from '../src/types/SaberPart';
@@ -25,6 +26,7 @@ async function main() {
       inventory: { create: createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,
+      password: await hash('password1234'),
     },
   });
 }
