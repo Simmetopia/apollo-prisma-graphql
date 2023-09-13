@@ -57,7 +57,7 @@ export const ItemMutations = extendType({
         });
       },
     });
-    t.field('updateItemById', {
+    t.field('updateItemUserIdById', {
       type: 'Item',
       args: {
         partname: nonNull(stringArg()),
