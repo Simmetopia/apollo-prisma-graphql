@@ -1,4 +1,5 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import bcrypt from 'bcrypt';
+import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -7,6 +8,7 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.money);
   },
 });
 
@@ -19,22 +21,58 @@ export const UserUpdateInputArgs = inputObjectType({
   },
 });
 
+export const UserQueries = extendType({
+  type: 'Query', 
+  definition: (t) => {
+    t.field('first_user', {
+      type: nonNull('User'),
+      resolve: async (source, args, context) => {
+        return context.db.user.findFirstOrThrow();
+      },
+    });
+  }, 
+});
+
 export const UserAuthType = inputObjectType({
   name: 'UserAuthInput',
 
   definition: (t) => {
     t.nonNull.string('username');
+    t.nonNull.string('password');
   },
 });
 
-export const UserQueries = extendType({
-  type: 'Query',
-  definition: (t) => {},
-});
-
+// Verify a password using bcrypt
+async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  return bcrypt.compare(plainPassword, hashedPassword);
+}
 export const UserMutations = extendType({
   type: 'Mutation',
+<<<<<<< HEAD
   definition(t) {},
+=======
+  definition(t) {
+    t.field('login', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'UserAuthInput' })),
+      },
+      resolve: async (source, { input }, context) => {
+        // Find the user by username
+        const user = await context.db.user.findFirstOrThrow({
+          where: { username: input?.username },
+        });
+
+        const passwordMatch = await verifyPassword(input.password, user.password);
+
+        if (!passwordMatch) {
+          throw new Error('Invalid password');
+        }
+        return user;
+      },
+    });
+  },
+>>>>>>> dev
 });
 
 export const BuyItemArgs = inputObjectType({

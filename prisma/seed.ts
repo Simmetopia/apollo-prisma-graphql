@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 import { commerce, lorem, random } from 'faker';
 
 import { SaberParts } from '../src/types/SaberPart';
@@ -19,12 +20,15 @@ const createItems = (amountOfItems: number) => {
 
 async function main() {
   await client.$connect();
+
+  const hashedPassword = await bcrypt.hash('1234', 10);
   await client.user.create({
     data: {
-      username: WEBSHOP_OWNER,
+      username: 'Ehab',
       inventory: { create: createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,
+      password: hashedPassword,
     },
   });
 }

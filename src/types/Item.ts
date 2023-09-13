@@ -1,4 +1,4 @@
-import { extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
+import { arg, extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
 import { Item } from 'nexus-prisma';
 
 export const item = objectType({
@@ -16,8 +16,9 @@ export const ItemArgs = inputObjectType({
   name: 'ItemArgs',
   definition: (t) => {
     t.string('partDescription');
-    t.string('partName');
-    t.string('saberPart');
+    t.nonNull.string('partName');
+    t.nonNull.string('saberPart');
+    t.int('price');
   },
 });
 
@@ -38,5 +39,22 @@ export const ItemQueries = extendType({
 
 export const ItemMutations = extendType({
   type: 'Mutation',
-  definition: (t) => {},
+  definition: (t) => {
+    t.field('createItem', {
+      type: 'Item',
+      args: {
+        input: nonNull(arg({ type: 'ItemArgs' })),
+      },
+      resolve: async (source, args, context) => {
+        return context.db.item.create({
+          data: {
+            partDescription: args.input.partDescription,
+            partName: args.input.partName,
+            saberPart: args.input.saberPart,
+            price: args.input.price,
+          },
+        });
+      },
+    });
+  },
 });
