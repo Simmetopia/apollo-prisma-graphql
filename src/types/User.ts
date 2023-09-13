@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { arg, extendType, inputObjectType, list, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
@@ -9,6 +10,7 @@ export const user = objectType({
     t.field(User.id);
     t.field(User.username);
     t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
@@ -110,17 +112,7 @@ export const BuyAndSellItems = extendType({
         input: nonNull(arg({ type: 'BuyItemArgs' })),
       },
       resolve: async (source, { input }, context) => {
-        // Find the user by username
-        const user = await context.db.user.findFirstOrThrow({
-          where: { username: input?.username },
-        });
-
-        const passwordMatch = await verifyPassword(input.password, user.password);
-
-        if (!passwordMatch) {
-          throw new Error('Invalid password');
-        }
-        return user;
+        return purchaseItem(input.sellerId, input.buyerId, input.itemId, context.db);
       },
     });
   },
@@ -144,7 +136,7 @@ async function purchaseItem(seller: string, buyer: string, itemId: string, db: P
 
     // Validate buyer has enough money
     if (to.money < 0) {
-      throw new Error('User with id ${from} doesnt have enough money ($money)');
+      throw new Error('Not enough money');
     }
 
     // Increment balance of seller
