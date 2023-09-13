@@ -123,8 +123,6 @@ async function purchaseItem(seller: string, buyer: string, itemId: string, db: P
     const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
     const user_buyer = await tx.user.findFirstOrThrow({ where: { id: { equals: buyer } } });
 
-    console.log(item.userId + '----' + user_buyer.id);
-
     if (item.userId === user_buyer.id) {
       throw new Error('User already owns this item');
     }
