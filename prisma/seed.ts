@@ -24,7 +24,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash('1234', 10);
   await client.user.create({
     data: {
-      username: 'Ehab',
+      username: WEBSHOP_OWNER,
       inventory: { create: createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,
