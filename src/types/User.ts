@@ -8,6 +8,7 @@ export const user = objectType({
     t.field(User.id);
     t.field(User.username);
     t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
@@ -31,6 +32,12 @@ export const UserAuthType = inputObjectType({
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
+    t.field('me', {
+      type: 'User',
+      resolve: async (_source, _args, context) => {
+        return context.user;
+      },
+    });
     t.field('first_user', {
       type: 'User',
       resolve: async (_source, args, context) => {

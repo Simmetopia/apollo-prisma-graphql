@@ -3,7 +3,7 @@ import { datatype } from 'faker';
 import { sign } from 'jsonwebtoken';
 import { extendType, inputObjectType, nonNull, objectType } from 'nexus';
 
-const omega_token_secret = process.env.JWT_SECRET || 'omega_token_secret';
+export const omega_token_secret = process.env.JWT_SECRET || 'omega_token_secret';
 export const AuthInputObject = inputObjectType({
   name: 'AuthInputObject',
   definition: (t) => {
@@ -24,7 +24,7 @@ export const mutations = extendType({
   type: 'Mutation',
   definition: (t) => {
     t.field('login', {
-      type: 'AuthObject',
+      type: nonNull('AuthObject'),
       args: { auth: nonNull(AuthInputObject) },
       resolve: async (source, args, context) => {
         const user = await context.db.user.findUniqueOrThrow({
@@ -37,7 +37,7 @@ export const mutations = extendType({
           throw new Error('Invalid login credentials');
         }
 
-        return { user, token: sign({ user }, omega_token_secret) };
+        return { user, token: sign({ sub: user.id }, omega_token_secret) };
       },
     });
     t.field('register', {
@@ -52,7 +52,7 @@ export const mutations = extendType({
           },
         });
 
-        return { user, token: sign({ user }, omega_token_secret) };
+        return { user, token: sign({ sub: user.id }, omega_token_secret) };
       },
     });
   },
