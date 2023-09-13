@@ -5,11 +5,10 @@ export const item = objectType({
   name: Item.$name,
   definition(t) {
     t.field(Item.id);
-    t.field('saberPart', {
-      type: 'String',
-    });
-    t.field(Item.price);
+    t.field(Item.saberPart);
+    t.field(Item.partName);
     t.field(Item.partDescription);
+    t.field(Item.price);
   },
 });
 
@@ -26,13 +25,13 @@ export const ItemArgs = inputObjectType({
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('getItemByName', {
-      type: 'Item',
+    t.nonNull.list.field('getAllUserItemsById', {
+      type: nonNull('Item'),
       args: {
-        partName: nonNull(stringArg()),
+        userId: nonNull(stringArg()),
       },
       resolve: async (source, args, context) => {
-        return context.db.item.findFirstOrThrow({ where: { partName: { equals: args.partName } } });
+        return context.db.item.findMany({ where: { userId: { equals: args.userId } } });
       },
     });
   },
@@ -55,6 +54,24 @@ export const ItemMutations = extendType({
             price: args.input.price,
           },
         });
+      },
+    });
+    t.field('updateItemUserIdById', {
+      type: 'Item',
+      args: {
+        partname: nonNull(stringArg()),
+        newUserId: nonNull(stringArg()),
+      },
+      resolve: async (source, args, context) => {
+        const item = await context.db.item.findFirstOrThrow({ where: { partName: { equals: args.partname } } });
+
+        // Update the user ID of the found item
+        const updatedItem = await context.db.item.update({
+          where: { id: item.id }, // Assuming 'id' is the unique identifier of the item
+          data: { userId: args.newUserId },
+        });
+
+        return updatedItem;
       },
     });
   },
