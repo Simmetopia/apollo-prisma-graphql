@@ -95,12 +95,71 @@ export const BuyItemArgs = inputObjectType({
   name: 'BuyItemArgs',
   nonNullDefaults: { input: true },
   definition: (t) => {
-    t.id('userId');
+    t.id('sellerId');
+    t.id('buyerId');
     t.id('itemId');
   },
 });
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) {
+    t.field('purchaseItem', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'BuyItemArgs' })),
+      },
+      resolve: async (source, { input }, context) => {
+        // Find the user by username
+        const user = await context.db.user.findFirstOrThrow({
+          where: { username: input?.username },
+        });
+
+        const passwordMatch = await verifyPassword(input.password, user.password);
+
+        if (!passwordMatch) {
+          throw new Error('Invalid password');
+        }
+        return user;
+      },
+    });
+  },
 });
+
+async function purchaseItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
+  return await db.$transaction(async (tx) => {
+    const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
+    // Decrement money from the buyer and add item to userid
+    const to = await tx.user.update({
+      data: {
+        money: {
+          decrement: item.price,
+        },
+        inventory: { connect: { id: item.id } },
+      },
+      where: {
+        id: buyer,
+      },
+    });
+
+    // Validate buyer has enough money
+    if (to.money < 0) {
+      throw new Error('User with id ${from} doesnt have enough money ($money)');
+    }
+
+    // Increment balance of seller
+    const from = await tx.user.update({
+      data: {
+        money: {
+          increment: item.price,
+        },
+      },
+      where: {
+        id: seller,
+      },
+    });
+
+    // Return buyer
+    return to;
+  });
+}
