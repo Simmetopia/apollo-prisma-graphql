@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { lorem } from 'faker';
-import { extendType, inputObjectType, intArg, nonNull, objectType, stringArg, subscriptionType } from 'nexus';
+import { extendType, inputObjectType, nonNull, objectType, stringArg, subscriptionType } from 'nexus';
 import { Item } from 'nexus-prisma';
 
 import { pubsub } from '..';
@@ -55,6 +54,13 @@ async function trade_item(
   });
 }
 
+export const update_marketplace = async (db: PrismaClient) => {
+  pubsub.publish(
+    'marketplace',
+    await db.item.findMany({ where: { User: { username: { equals: 'dark_saber_dealer_69' } } } }),
+  );
+};
+
 export const itemMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
@@ -65,6 +71,8 @@ export const itemMutations = extendType({
         const user_from = await db.user.findUniqueOrThrow({ where: { username: 'dark_saber_dealer_69' } });
         const item = await db.item.findUniqueOrThrow({ where: { id: item_id } });
         await trade_item(user_from, user, item, db);
+
+        await update_marketplace(db);
         return db.user.findUniqueOrThrow({ where: { id: user.id } });
       },
     });
@@ -75,6 +83,8 @@ export const itemMutations = extendType({
         const user_from = await db.user.findUniqueOrThrow({ where: { username: 'dark_saber_dealer_69' } });
         const item = await db.item.findUniqueOrThrow({ where: { id: item_id } });
         await trade_item(user, user_from, item, db);
+
+        await update_marketplace(db);
         return db.user.findUniqueOrThrow({ where: { id: user.id } });
       },
     });
@@ -105,22 +115,27 @@ export const ItemQueries = extendType({
   },
 });
 
-setInterval(() => {
-  pubsub.publish('TRUTHS:NA', lorem.sentence());
-}, 1000);
-
-setInterval(() => {
-  pubsub.publish('TRUTHS:32', 'simon is the best');
-}, 1000);
+export const update_later = (id: string, data: any) => {
+  setTimeout(() => {
+    pubsub.publish(id, data);
+  }, 1000);
+};
 
 export const subbies = subscriptionType({
   definition(t) {
-    t.string('truths', {
-      args: {
-        id: intArg(),
+    t.nonNull.list.nonNull.field('marketplace', {
+      type: 'Item',
+      async subscribe(root, args, context) {
+        const user = await context.db.user.findUniqueOrThrow({
+          where: { username: 'dark_saber_dealer_69' },
+          include: { inventory: true },
+        });
+        update_later('marketplace', user.inventory);
+
+        return pubsub.asyncIterator(['marketplace']);
       },
-      subscribe: (_, args) => pubsub.asyncIterator(`TRUTHS:${args.id || 'NA'}`),
       resolve(eventData) {
+        console.log(eventData);
         return eventData;
       },
     });

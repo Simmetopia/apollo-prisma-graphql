@@ -39,7 +39,15 @@ const wsServer = new WebSocketServer({
   path: '/',
 });
 
-const serverCleanup = useServer({ schema: shema }, wsServer);
+const serverCleanup = useServer(
+  {
+    schema: shema,
+    context: async () => {
+      return { db: prisma_client };
+    },
+  },
+  wsServer,
+);
 const server = new ApolloServer({
   schema: shema as unknown as GraphQLSchema,
   plugins: [
