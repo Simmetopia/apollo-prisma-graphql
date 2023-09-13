@@ -21,10 +21,10 @@ const createItems = (amountOfItems: number) => {
 async function main() {
   await client.$connect();
 
-  const hashedPassword = await bcrypt.hash('1234', 10);
+  const hashedPassword = await bcrypt.hash('1234', 12);
   await client.user.create({
     data: {
-      username: 'Ehab',
+      username: WEBSHOP_OWNER,
       inventory: { create: createItems(10) },
       details: { create: { firstName: 'Watto', lastName: 'Darkies' } },
       money: 21000,

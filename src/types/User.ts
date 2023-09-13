@@ -65,6 +65,7 @@ export const UserMutations = extendType({
         return user;
       },
     });
+
     t.field('Signup', {
       type: 'User',
       args: {
