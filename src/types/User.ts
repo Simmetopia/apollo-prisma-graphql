@@ -22,7 +22,7 @@ export const UserUpdateInputArgs = inputObjectType({
 });
 
 export const UserQueries = extendType({
-  type: 'Query', 
+  type: 'Query',
   definition: (t) => {
     t.field('first_user', {
       type: nonNull('User'),
@@ -30,7 +30,7 @@ export const UserQueries = extendType({
         return context.db.user.findFirstOrThrow();
       },
     });
-  }, 
+  },
 });
 
 export const UserAuthType = inputObjectType({
@@ -48,9 +48,6 @@ async function verifyPassword(plainPassword: string, hashedPassword: string): Pr
 }
 export const UserMutations = extendType({
   type: 'Mutation',
-<<<<<<< HEAD
-  definition(t) {},
-=======
   definition(t) {
     t.field('login', {
       type: 'User',
@@ -72,7 +69,6 @@ export const UserMutations = extendType({
       },
     });
   },
->>>>>>> dev
 });
 
 export const BuyItemArgs = inputObjectType({
