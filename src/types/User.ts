@@ -65,6 +65,28 @@ export const UserMutations = extendType({
         return user;
       },
     });
+    t.field('Signup', {
+      type: 'User',
+      args: {
+        input: nonNull(
+          arg({
+            type: 'UserAuthInput',
+          }),
+        ),
+      },
+      resolve: async (source, { input }, context) => {
+        const hashedPassword = await bcrypt.hash(input.password, 12);
+
+        const user = await context.db.user.create({
+          data: {
+            username: input.username,
+            password: hashedPassword,
+            money: 21000,
+          },
+        });
+        return user;
+      },
+    });
   },
 });
 
