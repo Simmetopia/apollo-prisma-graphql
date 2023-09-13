@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
+import { arg, extendType, inputObjectType, list, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -12,15 +12,6 @@ export const user = objectType({
   },
 });
 
-export const UserUpdateInputArgs = inputObjectType({
-  name: 'UserDetailsUpdateArgs',
-  definition: (t) => {
-    t.string('firstName');
-    t.string('lastName');
-    t.id('id');
-  },
-});
-
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
@@ -28,6 +19,12 @@ export const UserQueries = extendType({
       type: nonNull('User'),
       resolve: async (source, args, context) => {
         return context.db.user.findFirstOrThrow();
+      },
+    });
+    t.field('users', {
+      type: nonNull(list(nonNull('User'))),
+      resolve: async (source, args, context) => {
+        return context.db.user.findMany();
       },
     });
   },
