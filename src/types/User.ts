@@ -121,6 +121,14 @@ export const BuyAndSellItems = extendType({
 async function purchaseItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
   return await db.$transaction(async (tx) => {
     const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
+    const user_buyer = await tx.user.findFirstOrThrow({ where: { id: { equals: buyer } } });
+
+    console.log(item.userId + '----' + user_buyer.id);
+
+    if (item.userId === user_buyer.id) {
+      throw new Error('User already owns this item');
+    }
+
     // Decrement money from the buyer and add item to userid
     const to = await tx.user.update({
       data: {
@@ -130,7 +138,7 @@ async function purchaseItem(seller: string, buyer: string, itemId: string, db: P
         inventory: { connect: { id: item.id } },
       },
       where: {
-        id: buyer,
+        id: user_buyer?.id,
       },
     });
 
