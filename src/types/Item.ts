@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import { arg, extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
 import { Item } from 'nexus-prisma';
 
@@ -25,13 +26,19 @@ export const ItemArgs = inputObjectType({
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.nonNull.list.field('getAllUserItemsById', {
+    t.nonNull.list.field('getUserItems', {
       type: nonNull('Item'),
       args: {
         userId: nonNull(stringArg()),
       },
       resolve: async (source, args, context) => {
         return context.db.item.findMany({ where: { userId: { equals: args.userId } } });
+      },
+    });
+    t.nonNull.list.field('getMarketItems', {
+      type: nonNull('Item'),
+      resolve: async (source, args, context) => {
+        return context.db.item.findMany({ where: { userId: { equals: 'clmhg4l5l0000ke3pp76cx98i' } } });
       },
     });
   },
@@ -76,3 +83,41 @@ export const ItemMutations = extendType({
     });
   },
 });
+
+async function purchaseItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
+  return await db.$transaction(async (tx) => {
+    const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
+    // Decrement money from the buyer and add item to userid
+    const to = await tx.user.update({
+      data: {
+        money: {
+          decrement: item.price,
+        },
+        inventory: { connect: { id: item.id } },
+      },
+      where: {
+        id: buyer,
+      },
+    });
+
+    // Validate buyer has enough money
+    if (to.money < 0) {
+      throw new Error('User with id ${from} doesnt have enough money ($money)');
+    }
+
+    // Increment balance of seller
+    const from = await tx.user.update({
+      data: {
+        money: {
+          increment: item.price,
+        },
+      },
+      where: {
+        id: seller,
+      },
+    });
+
+    // Return buyer
+    return to;
+  });
+}
