@@ -50,7 +50,6 @@ async function trade_item(
       where: { id: to.id },
       data: { money: { decrement: item.price }, inventory: { connect: { id: item.id } } },
     });
-    return 'ok';
   });
 }
 
@@ -73,7 +72,11 @@ export const itemMutations = extendType({
         await trade_item(user_from, user, item, db);
 
         await update_marketplace(db);
-        return db.user.findUniqueOrThrow({ where: { id: user.id } });
+        const userUpdated = await db.user.findUniqueOrThrow({ where: { id: user.id } });
+
+        const topic = `my_money:${userUpdated.id}`;
+        await pubsub.publish(topic, userUpdated.money);
+        return userUpdated;
       },
     });
     t.field('sell_item', {
@@ -85,7 +88,11 @@ export const itemMutations = extendType({
         await trade_item(user, user_from, item, db);
 
         await update_marketplace(db);
-        return db.user.findUniqueOrThrow({ where: { id: user.id } });
+        const userUpdated = await db.user.findUniqueOrThrow({ where: { id: user.id } });
+
+        const topic = `my_money:${userUpdated.id}`;
+        await pubsub.publish(topic, userUpdated.money);
+        return userUpdated;
       },
     });
   },

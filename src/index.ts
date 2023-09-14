@@ -34,6 +34,7 @@ const prisma_client = new PrismaClient();
 const app = express();
 const httpServer = http.createServer(app);
 // Creating the WebSocket server
+
 const wsServer = new WebSocketServer({
   server: httpServer,
   path: '/',

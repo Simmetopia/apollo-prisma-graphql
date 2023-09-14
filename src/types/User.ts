@@ -1,6 +1,8 @@
 import { extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
 import { User } from 'nexus-prisma';
 
+import { pubsub } from '..';
+
 export const user = objectType({
   name: User.$name,
   description: User.$description,
@@ -56,21 +58,21 @@ export const UserQueries = extendType({
   },
 });
 
-export const UserMutations = extendType({
-  type: 'Mutation',
-  definition(t) { },
-});
-
-export const BuyItemArgs = inputObjectType({
-  name: 'BuyItemArgs',
-  nonNullDefaults: { input: true },
+export const userSubscriptions = extendType({
+  type: 'Subscription',
   definition: (t) => {
-    t.id('userId');
-    t.id('itemId');
+    t.field('my_money', {
+      type: 'Int',
+      args: {
+        user_id: nonNull(stringArg()),
+      },
+      subscribe: (_, { user_id }) => {
+        const topic = `my_money:${user_id}`;
+        return pubsub.asyncIterator([topic, 'items']);
+      },
+      resolve: (payload: number) => {
+        return payload;
+      },
+    });
   },
-});
-
-export const BuyAndSellItems = extendType({
-  type: 'Mutation',
-  definition(t) { },
 });

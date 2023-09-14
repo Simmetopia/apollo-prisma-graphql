@@ -4,7 +4,6 @@ import { verify } from 'jsonwebtoken';
 import { omega_token_secret } from './types';
 
 export async function auth(req, db: PrismaClient) {
-  console.log(req.headers);
   const token = req.headers.authorization;
   if (!token) return null;
 
