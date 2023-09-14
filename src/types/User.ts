@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 import { arg, extendType, inputObjectType, list, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
@@ -41,15 +42,24 @@ export const UserAuthType = inputObjectType({
   },
 });
 
+export const UserTypes = objectType({
+  name: 'UserWithToken',
+  definition(t) {
+    t.field('user', { type: 'User' });
+    t.string('token');
+  },
+});
+
 // Verify a password using bcrypt
 async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
   return bcrypt.compare(plainPassword, hashedPassword);
 }
+export const omega_token_secret = process.env.JWT_SECRET || 'omega_token_secret';
 export const UserMutations = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('login', {
-      type: 'User',
+      type: 'UserWithToken',
       args: {
         input: nonNull(arg({ type: 'UserAuthInput' })),
       },
@@ -64,7 +74,15 @@ export const UserMutations = extendType({
         if (!passwordMatch) {
           throw new Error('Invalid password');
         }
-        return user;
+
+        const token = sign({ sub: user.id }, omega_token_secret, {
+          expiresIn: '12h',
+        });
+
+        return {
+          user,
+          token,
+        };
       },
     });
 

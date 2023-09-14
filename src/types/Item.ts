@@ -21,15 +21,12 @@ export const ItemArgs = inputObjectType({
     t.int('price');
   },
 });
-
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
     t.nonNull.list.field('getUserItems', {
       type: nonNull('Item'),
-      args: {
-        userId: nonNull(stringArg()),
-      },
+
       resolve: async (source, args, context) => {
         return context.db.item.findMany({ where: { userId: { equals: args.userId } } });
       },
