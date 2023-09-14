@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { arg, extendType, inputObjectType, list, nonNull, objectType } from 'nexus';
@@ -10,6 +11,7 @@ export const user = objectType({
     t.field(User.id);
     t.field(User.username);
     t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
@@ -113,12 +115,67 @@ export const BuyItemArgs = inputObjectType({
   name: 'BuyItemArgs',
   nonNullDefaults: { input: true },
   definition: (t) => {
-    t.id('userId');
+    t.id('sellerId');
+    t.id('buyerId');
     t.id('itemId');
   },
 });
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) {},
+  definition(t) {
+    t.field('purchaseItem', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'BuyItemArgs' })),
+      },
+      resolve: async (source, { input }, context) => {
+        return purchaseItem(input.sellerId, input.buyerId, input.itemId, context.db);
+      },
+    });
+  },
 });
+
+async function purchaseItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
+  return await db.$transaction(async (tx) => {
+    const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
+    const user_buyer = await tx.user.findFirstOrThrow({ where: { id: { equals: buyer } } });
+
+    if (item.userId === user_buyer.id) {
+      throw new Error('User already owns this item');
+    }
+
+    // Decrement money from the buyer and add item to userid
+    const to = await tx.user.update({
+      data: {
+        money: {
+          decrement: item.price,
+        },
+        inventory: { connect: { id: item.id } },
+      },
+      where: {
+        id: user_buyer?.id,
+      },
+    });
+
+    // Validate buyer has enough money
+    if (to.money < 0) {
+      throw new Error('Not enough money');
+    }
+
+    // Increment balance of seller
+    const from = await tx.user.update({
+      data: {
+        money: {
+          increment: item.price,
+        },
+      },
+      where: {
+        id: seller,
+      },
+    });
+
+    // Return buyer
+    return to;
+  });
+}
