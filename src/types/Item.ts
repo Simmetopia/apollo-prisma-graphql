@@ -1,4 +1,4 @@
-import { arg, extendType, inputObjectType, nonNull, objectType, stringArg } from 'nexus';
+import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
 import { Item } from 'nexus-prisma';
 
 export const item = objectType({
@@ -26,15 +26,14 @@ export const ItemQueries = extendType({
   definition: (t) => {
     t.nonNull.list.field('getUserItems', {
       type: nonNull('Item'),
-
       resolve: async (source, args, context) => {
-        return context.db.item.findMany({ where: { userId: { equals: args.userId } } });
+        return context.db.item.findMany({ where: { userId: { equals: context.user.id } } });
       },
     });
     t.nonNull.list.field('getMarketItems', {
       type: nonNull('Item'),
       resolve: async (source, args, context) => {
-        return context.db.item.findMany({ where: { userId: { equals: 'clmhg4l5l0000ke3pp76cx98i' } } });
+        return context.db.item.findMany({ where: { userId: { equals: 'clmesij9r0000klbkv1tyxtud' } } });
       },
     });
   },

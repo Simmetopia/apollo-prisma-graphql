@@ -116,7 +116,6 @@ export const BuyItemArgs = inputObjectType({
   nonNullDefaults: { input: true },
   definition: (t) => {
     t.id('sellerId');
-    t.id('buyerId');
     t.id('itemId');
   },
 });
@@ -130,7 +129,7 @@ export const BuyAndSellItems = extendType({
         input: nonNull(arg({ type: 'BuyItemArgs' })),
       },
       resolve: async (source, { input }, context) => {
-        return purchaseItem(input.sellerId, input.buyerId, input.itemId, context.db);
+        return purchaseItem(input.sellerId, context.user.id, input.itemId, context.db);
       },
     });
   },
