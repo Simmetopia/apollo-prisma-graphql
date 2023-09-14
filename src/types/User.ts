@@ -115,8 +115,8 @@ export const BuyItemArgs = inputObjectType({
   name: 'BuyItemArgs',
   nonNullDefaults: { input: true },
   definition: (t) => {
-    t.id('sellerId');
-    t.id('itemId');
+    t.string('sellerId');
+    t.string('itemId');
   },
 });
 

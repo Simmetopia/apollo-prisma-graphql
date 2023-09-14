@@ -9,6 +9,7 @@ export const item = objectType({
     t.field(Item.partName);
     t.field(Item.partDescription);
     t.field(Item.price);
+    t.field(Item.userId);
   },
 });
 
@@ -21,6 +22,7 @@ export const ItemArgs = inputObjectType({
     t.int('price');
   },
 });
+
 export const ItemQueries = extendType({
   type: 'Query',
   definition: (t) => {
@@ -33,7 +35,7 @@ export const ItemQueries = extendType({
     t.nonNull.list.field('getMarketItems', {
       type: nonNull('Item'),
       resolve: async (source, args, context) => {
-        return context.db.item.findMany({ where: { userId: { equals: 'clmesij9r0000klbkv1tyxtud' } } });
+        return context.db.item.findMany({ where: { userId: { equals: 'clmixf8o50000kees7k4x9h6m' } } });
       },
     });
   },
