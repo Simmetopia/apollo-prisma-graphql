@@ -9,6 +9,7 @@ export const item = objectType({
     t.field(Item.partName);
     t.field(Item.partDescription);
     t.field(Item.price);
+    t.field(Item.userId);
   },
 });
 
