@@ -18,12 +18,6 @@ export const user = objectType({
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('first_user', {
-      type: nonNull('User'),
-      resolve: async (source, args, context) => {
-        return context.db.user.findFirstOrThrow();
-      },
-    });
     t.field('users', {
       type: nonNull(list(nonNull('User'))),
       resolve: async (source, args, context) => {
