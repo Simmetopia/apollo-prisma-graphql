@@ -28,7 +28,7 @@ export const ItemQueries = extendType({
       type: nonNull('Item'),
 
       resolve: async (source, args, context) => {
-        return context.db.item.findMany({ where: { userId: { equals: context.db.item.id } } });
+        return context.db.item.findMany({ where: { userId: { equals: args.userId } } });
       },
     });
   },
