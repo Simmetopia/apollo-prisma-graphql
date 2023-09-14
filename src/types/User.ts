@@ -18,12 +18,6 @@ export const user = objectType({
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.field('first_user', {
-      type: nonNull('User'),
-      resolve: async (source, args, context) => {
-        return context.db.user.findFirstOrThrow();
-      },
-    });
     t.field('users', {
       type: nonNull(list(nonNull('User'))),
       resolve: async (source, args, context) => {
@@ -114,8 +108,8 @@ export const UserMutations = extendType({
   },
 });
 
-export const BuyItemArgs = inputObjectType({
-  name: 'BuyItemArgs',
+export const TradeArgs = inputObjectType({
+  name: 'TradeArgs',
   nonNullDefaults: { input: true },
   definition: (t) => {
     t.string('sellerId');
@@ -129,16 +123,25 @@ export const BuyAndSellItems = extendType({
     t.field('purchaseItem', {
       type: 'User',
       args: {
-        input: nonNull(arg({ type: 'BuyItemArgs' })),
+        input: nonNull(arg({ type: 'TradeArgs' })),
       },
       resolve: async (source, { input }, context) => {
-        return purchaseItem(input.sellerId, context.user.id, input.itemId, context.db);
+        return tradeItem(input.sellerId, context.user.id, input.itemId, context.db);
+      },
+    });
+    t.field('sellItem', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'TradeArgs' })),
+      },
+      resolve: async (source, { input }, context) => {
+        return tradeItem(context.user.id, input.sellerId, input.itemId, context.db);
       },
     });
   },
 });
 
-async function purchaseItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
+async function tradeItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
   return await db.$transaction(async (tx) => {
     const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
     const user_buyer = await tx.user.findFirstOrThrow({ where: { id: { equals: buyer } } });
