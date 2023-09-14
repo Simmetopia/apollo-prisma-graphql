@@ -6,6 +6,7 @@ import { makeSchema } from 'nexus';
 import { $settings } from 'nexus-prisma';
 import path, { join } from 'path';
 
+import { VerifyToken } from './middleware';
 import * as types from './types';
 
 const shema = makeSchema({
@@ -35,6 +36,7 @@ startStandaloneServer(server, {
     return {
       ...request,
       db: prisma_client,
+      user: await VerifyToken(request.req, prisma_client),
     };
   },
 }).then((app) => {

@@ -74,7 +74,7 @@ export const UserMutations = extendType({
         }
 
         const token = sign({ sub: user.id }, omega_token_secret, {
-          expiresIn: '1h',
+          expiresIn: '12h',
         });
 
         return {
