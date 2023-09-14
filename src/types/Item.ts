@@ -135,7 +135,6 @@ export const subbies = subscriptionType({
         return pubsub.asyncIterator(['marketplace']);
       },
       resolve(eventData) {
-        console.log(eventData);
         return eventData;
       },
     });

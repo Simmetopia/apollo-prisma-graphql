@@ -75,10 +75,10 @@ server.start().then(() => {
     cors<cors.CorsRequest>(),
     bodyParser.json(),
     expressMiddleware(server, {
-      context: async (request) => {
+      context: async (req) => {
         return {
           db: prisma_client,
-          user: await auth(request.req, prisma_client),
+          user: await auth(req.req, prisma_client),
         };
       },
     }),

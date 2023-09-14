@@ -1,10 +1,10 @@
-import { StandaloneServerContextFunctionArgument } from '@apollo/server/dist/esm/standalone';
 import { PrismaClient } from '@prisma/client';
 import { verify } from 'jsonwebtoken';
 
 import { omega_token_secret } from './types';
 
-export async function auth(req: StandaloneServerContextFunctionArgument['req'], db: PrismaClient) {
+export async function auth(req, db: PrismaClient) {
+  console.log(req.headers);
   const token = req.headers.authorization;
   if (!token) return null;
 
