@@ -87,7 +87,7 @@ export const UserMutations = extendType({
     });
 
     t.field('Signup', {
-      type: 'User',
+      type: 'UserWithToken',
       args: {
         input: nonNull(
           arg({
@@ -105,7 +105,10 @@ export const UserMutations = extendType({
             money: 21000,
           },
         });
-        return user;
+        const token = sign({ sub: user.id }, omega_token_secret, {
+          expiresIn: '12h',
+        });
+        return { user, token };
       },
     });
   },
