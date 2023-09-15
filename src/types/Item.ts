@@ -1,5 +1,7 @@
-import { arg, extendType, inputObjectType, nonNull, objectType } from 'nexus';
+import { arg, extendType, inputObjectType, nonNull, objectType, subscriptionType } from 'nexus';
 import { Item } from 'nexus-prisma';
+
+import { pubsub } from '..';
 
 export const item = objectType({
   name: Item.$name,
@@ -58,6 +60,48 @@ export const ItemMutations = extendType({
             price: args.input.price,
           },
         });
+      },
+    });
+  },
+});
+
+export const update_later = (id: string, data: any) => {
+  setTimeout(() => {
+    pubsub.publish(id, data);
+  }, 1000);
+};
+
+export const subbies = subscriptionType({
+  definition(t) {
+    t.nonNull.list.nonNull.field('marketplace', {
+      type: 'Item',
+      async subscribe(_, __, context) {
+        const user = await context.db.user.findUniqueOrThrow({
+          where: { username: 'dark_saber_dealer_69' },
+          include: { inventory: true },
+        });
+        update_later('marketplace', user.inventory);
+
+        return pubsub.asyncIterator(['marketplace']);
+      },
+      resolve(eventData) {
+        return eventData;
+      },
+    });
+
+    t.nonNull.list.nonNull.field('UsersItems', {
+      type: 'Item',
+      async subscribe(_, __, context) {
+        const user = await context.db.user.findUniqueOrThrow({
+          where: { id: 'clmg73he80000klpfc6wki10b' },
+          include: { inventory: true },
+        });
+        update_later('UsersItems', user.inventory);
+
+        return pubsub.asyncIterator(['UsersItems']);
+      },
+      resolve(eventData) {
+        return eventData;
       },
     });
   },
