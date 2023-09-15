@@ -24,6 +24,12 @@ export const UserQueries = extendType({
         return context.db.user.findMany();
       },
     });
+    t.field('activeUser', {
+      type: nonNull('User'),
+      resolve: async (source, args, context) => {
+        return context.db.user.findFirstOrThrow({ where: { id: { equals: context.user.id } } });
+      },
+    });
   },
 });
 
