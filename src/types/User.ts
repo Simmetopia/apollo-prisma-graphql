@@ -1,4 +1,7 @@
-import { extendType, inputObjectType, objectType } from 'nexus';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { arg, extendType, inputObjectType, list, nonNull, objectType } from 'nexus';
 import { User } from 'nexus-prisma';
 
 export const user = objectType({
@@ -7,15 +10,26 @@ export const user = objectType({
   definition(t) {
     t.field(User.id);
     t.field(User.username);
+    t.field(User.money);
+    t.field(User.inventory);
   },
 });
 
-export const UserUpdateInputArgs = inputObjectType({
-  name: 'UserDetailsUpdateArgs',
+export const UserQueries = extendType({
+  type: 'Query',
   definition: (t) => {
-    t.string('firstName');
-    t.string('lastName');
-    t.id('id');
+    t.field('users', {
+      type: nonNull(list(nonNull('User'))),
+      resolve: async (source, args, context) => {
+        return context.db.user.findMany();
+      },
+    });
+    t.field('activeUser', {
+      type: nonNull('User'),
+      resolve: async (source, args, context) => {
+        return context.db.user.findFirstOrThrow({ where: { id: { equals: context.user.id } } });
+      },
+    });
   },
 });
 
@@ -24,36 +38,155 @@ export const UserAuthType = inputObjectType({
 
   definition: (t) => {
     t.nonNull.string('username');
+    t.nonNull.string('password');
   },
 });
 
-export const UserQueries = extendType({
-  type: 'Query',
-  definition: (t) => {
-    t.field('first_user', {
-      type: 'User',
-      resolve: async (source, args, context) => {
-        return context.db.user.findFirstOrThrow();
+export const UserTypes = objectType({
+  name: 'UserWithToken',
+  definition(t) {
+    t.field('user', { type: 'User' });
+    t.string('token');
+  },
+});
+
+// Verify a password using bcrypt
+async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  return bcrypt.compare(plainPassword, hashedPassword);
+}
+export const omega_token_secret = process.env.JWT_SECRET || 'omega_token_secret';
+export const UserMutations = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.field('login', {
+      type: 'UserWithToken',
+      args: {
+        input: nonNull(arg({ type: 'UserAuthInput' })),
+      },
+      resolve: async (source, { input }, context) => {
+        // Find the user by username
+        const user = await context.db.user.findFirstOrThrow({
+          where: { username: input?.username },
+        });
+
+        const passwordMatch = await verifyPassword(input.password, user.password);
+
+        if (!passwordMatch) {
+          throw new Error('Invalid password');
+        }
+
+        const token = sign({ sub: user.id }, omega_token_secret, {
+          expiresIn: '12h',
+        });
+
+        return {
+          user,
+          token,
+        };
+      },
+    });
+
+    t.field('Signup', {
+      type: 'UserWithToken',
+      args: {
+        input: nonNull(
+          arg({
+            type: 'UserAuthInput',
+          }),
+        ),
+      },
+      resolve: async (source, { input }, context) => {
+        const hashedPassword = await bcrypt.hash(input.password, 12);
+
+        const user = await context.db.user.create({
+          data: {
+            username: input.username,
+            password: hashedPassword,
+            money: 21000,
+          },
+        });
+        const token = sign({ sub: user.id }, omega_token_secret, {
+          expiresIn: '12h',
+        });
+        return { user, token };
       },
     });
   },
 });
 
-export const UserMutations = extendType({
-  type: 'Mutation',
-  definition(t) { },
-});
-
-export const BuyItemArgs = inputObjectType({
-  name: 'BuyItemArgs',
+export const TradeArgs = inputObjectType({
+  name: 'TradeArgs',
   nonNullDefaults: { input: true },
   definition: (t) => {
-    t.id('userId');
-    t.id('itemId');
+    t.string('sellerId');
+    t.string('itemId');
   },
 });
 
 export const BuyAndSellItems = extendType({
   type: 'Mutation',
-  definition(t) { },
+  definition(t) {
+    t.field('purchaseItem', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'TradeArgs' })),
+      },
+      resolve: async (source, { input }, context) => {
+        return tradeItem(input.sellerId, context.user.id, input.itemId, context.db);
+      },
+    });
+    t.field('sellItem', {
+      type: 'User',
+      args: {
+        input: nonNull(arg({ type: 'TradeArgs' })),
+      },
+      resolve: async (source, { input }, context) => {
+        return tradeItem(context.user.id, input.sellerId, input.itemId, context.db);
+      },
+    });
+  },
 });
+
+async function tradeItem(seller: string, buyer: string, itemId: string, db: PrismaClient) {
+  return await db.$transaction(async (tx) => {
+    const item = await tx.item.findFirstOrThrow({ where: { id: { equals: itemId } } });
+    const user_buyer = await tx.user.findFirstOrThrow({ where: { id: { equals: buyer } } });
+
+    if (item.userId === user_buyer.id) {
+      throw new Error('User already owns this item');
+    }
+
+    // Decrement money from the buyer and add item to userid
+    const to = await tx.user.update({
+      data: {
+        money: {
+          decrement: item.price,
+        },
+        inventory: { connect: { id: item.id } },
+      },
+      where: {
+        id: user_buyer?.id,
+      },
+    });
+
+    // Validate buyer has enough money
+    if (to.money < 0) {
+      throw new Error('Not enough money');
+    }
+
+    // Increment balance of seller
+    const from = await tx.user.update({
+      data: {
+        money: {
+          increment: item.price,
+        },
+      },
+      where: {
+        id: seller,
+      },
+    });
+
+    // Return buyer
+    return to;
+  });
+}
